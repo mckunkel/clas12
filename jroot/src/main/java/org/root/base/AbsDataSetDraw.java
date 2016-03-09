@@ -346,17 +346,19 @@ public class AbsDataSetDraw {
                 g2d.setColor(lineColor);
                 
                 if(ds.getErrorX(loop)>0){
-                    g2d.drawLine((int) (xfel), (int) yf, (int) (xfeh) , (int) yf);
+                    g2d.drawLine( startX + (int) (xfel), startY + (int) yf, 
+                            startX + (int) (xfeh) , startY + (int) yf);
                     //g2d.drawLine((int) (xf-xerLen), (int) yf, (int) (xf+xerLen) , (int) yf);
                 }
                 
                 if(ds.getErrorY(loop)>0){
                     //g2d.drawLine((int) xf, (int) (yf-yerLen), (int) xf , (int) (yf+yerLen));
                     
-                    g2d.drawLine((int) xf, (int) (yfel), (int) xf , (int) (yfeh));
+                    g2d.drawLine(startX + (int) xf, startY + (int) (yfel), 
+                            startX + (int) xf , startY + (int) (yfeh));
                 }
                 
-                mPainter.drawMarkerBasic(g2d, (int) xf, (int) yf, markerStyle,
+                mPainter.drawMarkerBasic(g2d, startX + (int) xf, startY + (int) yf, markerStyle,
                         markerSize,
                         markerLineWidth,markerColor,markerFillColor);
                 //mPainter.drawMarker(g2d, (int) xf, (int) yf, markerStyle, 
@@ -407,7 +409,7 @@ public class AbsDataSetDraw {
             g2d.setStroke(new BasicStroke(line_width, BasicStroke.CAP_BUTT,
                     BasicStroke.JOIN_MITER, 20.0f, dashPattern3, 0.0f));
         }
-        
+        int pointsadded = 0;
         g2d.setColor(ColorPalette.getColor(line_color));
         for(int loop = 0; loop < npoints; loop++){
             if(axis.getDataRegion().contains(ds.getDataX(loop),ds.getDataY(loop)) == true){
@@ -417,8 +419,9 @@ public class AbsDataSetDraw {
                 double yf = startY + axis.getFramePointY(yr);
                 //System.out.println(" POINT = " + loop + "  " + xr + "  " + yr
                 //+ " " + xf + " " + yf);
-                if(loop == 0){
+                if(pointsadded == 0){
                     path.moveTo( (int) xf, (int) yf);
+                    pointsadded++;
                 } else {
                     //System.out.println("adding point " + xf + " " + yf);
                     path.lineTo((int) xf, (int) yf);

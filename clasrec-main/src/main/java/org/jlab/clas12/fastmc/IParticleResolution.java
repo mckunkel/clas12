@@ -12,5 +12,5 @@ import org.jlab.clas.physics.Particle;
  * @author gavalian
  */
 public interface IParticleResolution {
-    void apply(Particle p);
+    void apply(Particle p, double torus_scale, double solenoid_scale);
 }

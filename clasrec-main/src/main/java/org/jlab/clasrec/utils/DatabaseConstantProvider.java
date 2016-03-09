@@ -6,15 +6,22 @@
 
 package org.jlab.clasrec.utils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
+import javax.swing.JFrame;
 import org.jlab.ccdb.Assignment;
 import org.jlab.ccdb.CcdbPackage;
 import org.jlab.ccdb.JDBCProvider;
 import org.jlab.ccdb.TypeTable;
 import org.jlab.ccdb.TypeTableColumn;
 import org.jlab.clas.tools.utils.StringTable;
+import org.jlab.containers.HashTable;
+import org.jlab.containers.HashTableViewer;
 import org.jlab.geom.base.ConstantProvider;
 import org.root.histogram.GraphErrors;
 
@@ -68,7 +75,16 @@ public class DatabaseConstantProvider implements ConstantProvider {
         this.variation = var;
         this.initialize(address);
     }
+    
     public void setPrintout(Boolean flag){ this.PRINTOUT_FLAG = flag;}
+    
+    public Set<String> getEntrySet(){
+        Set<String> entries = new HashSet<String>();
+        for(Map.Entry<String,String[]> entry: this.constantContainer.entrySet()){
+            entries.add(entry.getKey());
+        }
+        return entries;
+    }
     
     private String getEnvironment(){
         
@@ -124,6 +140,57 @@ public class DatabaseConstantProvider implements ConstantProvider {
         provider.setDefaultRun(this.runNumber);
 
         //Assignment asgmt = provider.getData("/test/test_vars/test_table");
+    }
+    
+    
+    public HashTable  readTable(String table_name){
+
+        Assignment asgmt = provider.getData(table_name);
+        int ncolumns = asgmt.getColumnCount();
+        Vector<TypeTableColumn> typecolumn = asgmt.getTypeTable().getColumns();
+        String[] format = new String[ncolumns-3];
+        
+        for(int loop = 3; loop < ncolumns; loop++){
+            //System.out.println("COLUMN " + typecolumn.get(loop).getName() 
+            //        + "  " + typecolumn.get(loop).getCellType().name());
+            if(typecolumn.get(loop).getCellType().name().compareTo("DOUBLE")==0){
+                format[loop-3] = typecolumn.get(loop).getName() + ":d";
+            } else {
+                format[loop-3] = typecolumn.get(loop).getName() + ":i";
+            }
+            //format[loop-3] = 
+        }
+        
+        HashTable  table = new HashTable(3,format);
+        List< Vector<String> >  tableRows = new ArrayList< Vector<String> >();
+        
+        
+        for(int loop = 0; loop < ncolumns; loop++){
+                Vector<String> column = asgmt.getColumnValuesString(loop);
+                tableRows.add(column);
+        }
+        
+        int nrows = tableRows.get(0).size();
+        
+        for(int nr = 0 ; nr < nrows; nr++){
+            String[] values = new String[ncolumns];
+            for(int nc = 0; nc < ncolumns; nc++){
+                values[nc] = tableRows.get(nc).get(nr);
+            }
+            //System.out.println(" LENGTH = " + values.length);
+            table.addRow(values);
+        }
+        /*
+                String[] values = new String[row.size()];
+                System.out.println("VALUES SIZE = " + row.size());
+                for(int el = 0; el < row.size(); el++){
+                    values[el] = row.elementAt(el);                    
+                    //for(String cell: row){
+                    //System.out.print(cell + " ");
+                }
+                table.addRow(values);
+        }*/
+        return table;
     }
     
     public void loadTable(String table_name){
@@ -248,8 +315,21 @@ public class DatabaseConstantProvider implements ConstantProvider {
         return str.toString();
     }
     
+    
+    public void clear(){
+        this.constantContainer.clear();
+    }
+    
     public int getSize(){
         return this.constantContainer.size();
+    }
+    
+    public int getSize(String name){
+        if(this.hasConstant(name)==true){
+            String[] array = this.constantContainer.get(name);
+            return array.length;
+        }
+        return 0;
     }
     
     public GraphErrors getGraph(String constant){
@@ -266,8 +346,26 @@ public class DatabaseConstantProvider implements ConstantProvider {
     }
 
     public static void main(String[] args){
-        DatabaseConstantProvider provider = new DatabaseConstantProvider();
+        DatabaseConstantProvider provider = new DatabaseConstantProvider(10,"default");
+        HashTable table = provider.readTable("/test/fc/fadc");
+        table.addConstrain(3, 0.0, 90.0);
         provider.disconnect();
+        JFrame frame = new JFrame();
+        frame.setSize(600, 600);
+        
+        /*
+        table.addRowAsDouble(new String[]{"21","7","1","0.5","0.1","0.6"});
+        table.addRowAsDouble(new String[]{"22","8","2","0.6","0.2","0.7"});
+        table.addRowAsDouble(new String[]{"23","9","3","0.7","0.3","0.8"});
+        table.addRowAsDouble(new String[]{"24","10","4","0.8","0.4","0.9"});
+        */
+        //table.readFile("/Users/gavalian/Work/Software/Release-8.0/COATJAVA/coatjava/EC.table");
+        //table.show();
+        HashTableViewer canvas = new HashTableViewer(table);
+        frame.add(canvas);
+        frame.pack();
+        frame.setVisible(true);
+        table.show();
     }
 
 }

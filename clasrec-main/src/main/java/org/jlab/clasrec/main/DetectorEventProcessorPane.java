@@ -53,7 +53,7 @@ public class DetectorEventProcessorPane extends JPanel implements ActionListener
     JButton                   buttonStop    = null;
     JLabel                    statusLabel   = null;
     Timer                     processTimer  = null;
-    private  Integer          threadDelay   = 2000;
+    private  Integer          threadDelay   = 0;
     JSpinner                  spinnerDelay  = null;
     
     
@@ -94,7 +94,7 @@ public class DetectorEventProcessorPane extends JPanel implements ActionListener
         statusLabel = new JLabel("No Opened File");
         this.add(statusLabel);
         SpinnerModel model =
-        new SpinnerNumberModel(2, //initial value
+        new SpinnerNumberModel(0, //initial value
                                0, //min
                                10, //max
                                1); //step

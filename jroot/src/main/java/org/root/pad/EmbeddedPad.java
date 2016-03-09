@@ -25,6 +25,7 @@ import org.root.base.DataSetCollection;
 import org.root.base.DataSetPad;
 import org.root.base.IDataSet;
 import org.root.base.LatexText;
+import org.root.basic.DataSetFrame;
 import org.root.data.DataSetXY;
 import org.root.func.F1D;
 import org.root.histogram.GraphErrors;
@@ -38,6 +39,7 @@ import org.root.utils.DataFactory;
 public class EmbeddedPad extends JPanel implements MouseMotionListener, MouseListener {
     
     private  final DataSetPad   dPad = new DataSetPad();
+    private  final DataSetFrame dFramePad = new DataSetFrame();
     private  int dragMove_startX   = 0;
     private  int dragMove_startY   = 0;
     
@@ -45,16 +47,16 @@ public class EmbeddedPad extends JPanel implements MouseMotionListener, MouseLis
         super();
         this.setPreferredSize(new Dimension(500,500));
         this.getPad().setStatBoxFontSize(12);
-        this.getPad().setAxisFontSize(14);
-        this.getPad().setTitleFontSize(14);
+        this.getPad().setAxisFontSize(12);
+        this.getPad().setTitleFontSize(12);
     }
     
     public EmbeddedPad(int xsize, int ysize){
         super();
         this.setPreferredSize(new Dimension(xsize,ysize));
         this.getPad().setStatBoxFontSize(12);
-        this.getPad().setAxisFontSize(14);
-        this.getPad().setTitleFontSize(14);
+        this.getPad().setAxisFontSize(12);
+        this.getPad().setTitleFontSize(12);
     }
     
     
@@ -62,14 +64,17 @@ public class EmbeddedPad extends JPanel implements MouseMotionListener, MouseLis
     
     public void drawOnCanvas(Graphics2D g2d, int xoffset, int yoffset, int w, int h){
         dPad.drawOnCanvas(g2d, xoffset, yoffset, w, h);
+        //this.dFramePad.drawOnCanvas(g2d, xoffset, yoffset, w, h);
     }
     
     public void add(IDataSet ds,String option){
         this.dPad.add(ds, option);
+        //this.dFramePad.add(ds, option);
     }
     
     public void add(IDataSet ds){
         this.dPad.add(ds);
+        //this.dFramePad.add(ds);
     }
     
     public void addText(LatexText txt){
@@ -94,7 +99,7 @@ public class EmbeddedPad extends JPanel implements MouseMotionListener, MouseLis
     @Override
     public void paint(Graphics g){        
         Graphics2D g2d = (Graphics2D) g;
-
+        
         int w = this.getSize().width;
         int h = this.getSize().height;
         this.drawOnCanvas(g2d, 0,0, w, h);
@@ -119,7 +124,7 @@ public class EmbeddedPad extends JPanel implements MouseMotionListener, MouseLis
         }
        
         if(axis.compareTo("Z")==0){
-            this.dPad.setLogZ(flag);
+            this.dFramePad.getAxisFrame().getAxisZ().setLog(flag);
         }
     }
     

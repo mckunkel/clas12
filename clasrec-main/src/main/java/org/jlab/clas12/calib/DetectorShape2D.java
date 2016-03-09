@@ -77,7 +77,7 @@ public class DetectorShape2D {
             double angleStart, double angleEnd){
         
         this.shapePath.clear();
-        int   numberOfPoints = 40;
+        int   numberOfPoints = 80;
         
         this.shapePath.addPoint(
                 radiusInner*Math.cos(Math.toRadians(angleStart)),

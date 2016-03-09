@@ -20,6 +20,7 @@ public class DetectorResponse {
     private Double             detectorTime = 0.0;
     private Double           detectorEnergy = 0.0;
     private Double           particlePath   = 0.0;
+    private int              association    = -1;
     
     public DetectorResponse(){
         
@@ -37,6 +38,9 @@ public class DetectorResponse {
     public Vector3 getMatchedPosition(){ return this.hitPositionMatched;}
     
     public DetectorDescriptor getDescriptor(){ return this.descriptor;}
+    
+    public int getAssociation(){ return this.association;}
+    public void setAssociation(int asc){ this.association = asc;}
     
     @Override
     public String toString(){

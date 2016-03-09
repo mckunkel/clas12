@@ -267,29 +267,27 @@ public class CLASReconstruction {
         
         Benchmark bench = new Benchmark();
         bench.addTimer("WRITER");
-        bench.addTimer("TOTAL");
-        
-       
+        bench.addTimer("TOTAL");               
         
         Long  processTime = System.currentTimeMillis();
-        
-        while(reader.hasEvent()&&this.runCondition.isValid()==false){
-            EvioDataEvent event  = (EvioDataEvent) reader.getNextEvent();
-            String[]      header = event.getString(5, 1);
-            this.runCondition.parse(header);
+        if(this.serviceConfig.hasItem("DAQ", "data")==false){
+            while(reader.hasEvent()&&this.runCondition.isValid()==false){
+                EvioDataEvent event  = (EvioDataEvent) reader.getNextEvent();
+                String[]      header = event.getString(5, 1);
+                this.runCondition.parse(header);
+            }
+            
+            
+            this.runCondition.show();
+            if(runCondition.hasItem("TORUS_FIELD_SCALE")==true&&this.serviceConfig.hasItem("MAG", "torus")==false){
+                this.serviceConfig.addItem("MAG", "torus", runCondition.getDouble("TORUS_FIELD_SCALE"));            
+            }
+            
+            if(runCondition.hasItem("SOLENOID_FIELD_SCALE")==true&&this.serviceConfig.hasItem("MAG", "solenoid")==false){
+                this.serviceConfig.addItem("MAG", "solenoid", runCondition.getDouble("SOLENOID_FIELD_SCALE"));            
+            }
+            
         }
-        
-        
-        this.runCondition.show();
-        if(runCondition.hasItem("TORUS_FIELD_SCALE")==true&&this.serviceConfig.hasItem("MAG", "torus")==false){
-            this.serviceConfig.addItem("MAG", "torus", runCondition.getDouble("TORUS_FIELD_SCALE"));            
-        }
-        
-        if(runCondition.hasItem("SOLENOID_FIELD_SCALE")==true&&this.serviceConfig.hasItem("MAG", "solenoid")==false){
-            this.serviceConfig.addItem("MAG", "solenoid", runCondition.getDouble("SOLENOID_FIELD_SCALE"));            
-        }
-        
-        
         
         this.initDetectors();
         this.init();

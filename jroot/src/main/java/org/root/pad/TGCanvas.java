@@ -15,6 +15,7 @@ import org.root.histogram.DataBox;
  * @author gavalian
  */
 public class TGCanvas extends JFrame {
+    
     private EmbeddedCanvas embCanvas = null;
     
     public TGCanvas(){

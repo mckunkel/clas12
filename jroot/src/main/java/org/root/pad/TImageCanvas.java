@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import org.root.base.DataSetPad;
 import org.root.base.IDataSet;
+import org.root.basic.DataSetFrame;
 
 /**
  *
@@ -29,7 +30,8 @@ import org.root.base.IDataSet;
 public class TImageCanvas {
     
     private String  imageType = "png";
-    private ArrayList<DataSetPad>  dataSets = new ArrayList<DataSetPad>();
+    //private ArrayList<DataSetPad>  dataSets = new ArrayList<DataSetPad>();
+    private ArrayList<DataSetFrame>  dataSets = new ArrayList<DataSetFrame>();
     private Integer canvasWidth  = 500;
     private Integer canvasHeight = 500;
     private Integer nDivisionsX  = 1;
@@ -55,20 +57,23 @@ public class TImageCanvas {
         this.nDivisionsY = ny;
         this.dataSets.clear();
         for(int loop = 0; loop < nx*ny; loop++){
-            this.dataSets.add(new DataSetPad());
+            this.dataSets.add(new DataSetFrame());
         }
         this.currentPad = 0;
     }
     
     public void draw(IDataSet set, String options){
-        if(options.contains("same")==false){
+        /*if(options.contains("same")==false){
             this.dataSets.get(currentPad).clear();
         }
         this.dataSets.get(currentPad).add(set);
+        */
+        this.dataSets.get(currentPad).add(set,options);
     }
     
     public void draw(IDataSet set){
         this.dataSets.get(currentPad).add(set);
+        //this.dataSets.get(currentPad).add(set);
     }
     
     public void cd(int pad){
@@ -87,7 +92,7 @@ public class TImageCanvas {
     
     public void saveSVG(String filename){
         SVGGraphics2D ig2 = new SVGGraphics2D(0.0, 0.0, this.canvasWidth, this.canvasHeight);
-         int padWidth  = (int) this.canvasWidth/this.nDivisionsX;
+        int padWidth  = (int) this.canvasWidth/this.nDivisionsX;
         int padHeight = (int) this.canvasHeight/this.nDivisionsY;
         
         int counter = 0;
@@ -158,7 +163,7 @@ public class TImageCanvas {
             Logger.getLogger(TImageCanvas.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+   
     public static byte[]  getCanvasImage(int xsize, int ysize, int columns, int rows, List<DataSetPad>  pads) throws IOException{
         BufferedImage bi = new BufferedImage(xsize, ysize, BufferedImage.TYPE_INT_ARGB);
         Graphics2D ig2 = bi.createGraphics();
@@ -187,6 +192,45 @@ public class TImageCanvas {
         result = biStream.toByteArray();
         return result;
     }
+    
+        /**
+     * Change Axis font size for all pads
+     * @param size 
+     */
+    public void setAxisFontSize(int size){
+        for(DataSetFrame pad : this.dataSets){
+            pad.getAxisFrame().getAxisX().setAxisFontSize(size);
+            pad.getAxisFrame().getAxisY().setAxisFontSize(size);
+        }
+    }
+    /**
+     * Change axis title string font size
+     * @param size 
+     */
+    public void setAxisTitleFontSize(int size){
+        for(DataSetFrame pad : this.dataSets){
+            pad.getAxisFrame().getAxisX().setTitleSize(size);
+            pad.getAxisFrame().getAxisY().setTitleSize(size);
+        }
+    }
+    /**
+     * Change pad title font size
+     * @param size 
+     */
+    public void setTitleFontSize(int size){
+        for(DataSetFrame pad : this.dataSets){
+            pad.getAxisFrame().setTitleSize(size);
+        }
+    }
+    /**
+     * Change font size for start box fonts
+     * @param size 
+     */
+    public void setStatBoxFontSize(int size){
+        for(DataSetFrame pad : this.dataSets){
+            pad.setStatBoxFontSize(size);
+        }
+     }
     
     public byte[] getCanvasImage() throws IOException {
         

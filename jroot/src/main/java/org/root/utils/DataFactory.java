@@ -52,7 +52,7 @@ public class DataFactory {
        double mean  = minX + (maxX-minX)/2.0;
        double sigma = (maxX-minX)*0.1;
        
-       System.out.println("MEAN/SIGMA = " + mean + " " + sigma);
+       //System.out.println("MEAN/SIGMA = " + mean + " " + sigma);
        f1x.setParameter(0,  120.0);
        f1x.setParameter(1,  mean);
        f1x.setParameter(2,  sigma);

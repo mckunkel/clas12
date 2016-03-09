@@ -102,10 +102,18 @@ public class DetectorShapeTabView extends JPanel implements ActionListener {
         //DetectorCalibration calib = new DetectorCalibration("a","b","1.0");
         //tab.initWith(calib);
         DetectorShapeView2D shapeView = new DetectorShapeView2D("FTOF");
-        for(int loop = 0; loop < 6; loop++){
+        
+        int ncounters = 30;
+        double angle  = 360.0/30.0; 
+        
+        for(int loop = 0; loop < ncounters; loop++){
             DetectorShape2D shape = new DetectorShape2D();
             
-            shape.createArc(80, 120, loop*60-25, loop*60+25);
+            //shape.createArc(80, 120, loop*60-25, loop*60+25);
+            shape.createTrapXY(60, 80, 80);
+            shape.getShapePath().translateXYZ(0, -350
+                    , 0);
+            shape.getShapePath().rotateZ(Math.toRadians(angle*loop));
             //shape.createBarXY(18, 50);
             //shape.getShapePath().translateXYZ(20*loop, 0, 0);
             if(loop%2==0){

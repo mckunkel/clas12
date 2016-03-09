@@ -225,7 +225,7 @@ public class DetectorShapeView2D extends JPanel implements MouseListener , Mouse
     
     public void draw2D(Graphics2D g2d, int xoff, int yoff, int width, int height){
         
-        RenderingHints rh = new RenderingHints(
+        RenderingHints rh = new RenderingHints(               
                 RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
         
@@ -247,13 +247,13 @@ public class DetectorShapeView2D extends JPanel implements MouseListener , Mouse
             GeneralPath path = new GeneralPath();
             int npoints = shape.getShapePath().size();
             Point3D  startpoint = shape.getShapePath().point(0);
-            int startx = this.getX( (int) startpoint.x(), width);
-            int starty = this.getY( (int) startpoint.y(), height);
+            int startx = this.getX( (float) startpoint.x(), width);
+            int starty = this.getY( (float) startpoint.y(), height);
             path.moveTo(startx, starty);
             for(int p = 1; p < npoints; p++){
                 Point3D  point = shape.getShapePath().point(p);
-                int x = this.getX( (int) point.x(), width);
-                int y = this.getY( (int) point.y(), height);
+                int x = this.getX( (float) point.x(), width);
+                int y = this.getY( (float) point.y(), height);
                 path.lineTo(x, y);
             }
             path.lineTo(startx, starty);

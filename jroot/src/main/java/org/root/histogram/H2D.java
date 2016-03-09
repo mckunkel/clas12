@@ -471,6 +471,21 @@ public class H2D implements EvioWritableTree,IDataSet {
             }
             return hclone;
         }
+        
+        public GraphErrors  getProfileX(){
+            GraphErrors graph = new GraphErrors();
+            int nbinsX = this.getXAxis().getNBins();
+            for(int loop = 0 ; loop < nbinsX; loop++){
+                H1D h1 = this.sliceX(loop);
+                double mean = h1.getMean();
+                double rms  = h1.getRMS();
+                //System.out.println("MEAN = " + mean + "  RMS = " + rms);
+                double bincenter = this.getXAxis().getBinCenter(loop);
+                graph.add(bincenter, mean, 0.0, rms);
+            }
+            return graph;
+        }
+        
 	/**
 	 * Creates a projection of the 2D histogram onto the X Axis, adding up all
 	 * the y bins for each x bin

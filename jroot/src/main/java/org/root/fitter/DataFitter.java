@@ -34,6 +34,7 @@ public class DataFitter {
     public static void fit(IDataSet ds, Function1D func){
         DataFitter.fit(ds, func, "*");
     }
+    
     public static void fit(IDataSet ds, Function1D func, String options){
         
         FitterFunction funcFitter = new FitterFunction(ds,func,options);

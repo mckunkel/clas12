@@ -64,6 +64,7 @@ public class LatexTextTools {
     
     public static AttributedString converSubScript(String line){
         ArrayList<Integer> supindex = new ArrayList<Integer>();
+        ArrayList<Integer> subindex = new ArrayList<Integer>();
         int index = line.indexOf("^");
         String newString = line;
         while(index>=0){
@@ -74,7 +75,7 @@ public class LatexTextTools {
             index = newString.indexOf("_");
             //System.out.println(newString);
         }
-        
+                        
         AttributedString  string = new AttributedString(newString);
         
         for(Integer indx : supindex){

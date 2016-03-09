@@ -23,11 +23,12 @@ import org.root.base.LatexText;
  * @author gavalian
  */
 public class GraphicsAxis {
+    
     private List<Double>  axisMarks       = new ArrayList<Double>();
     private List<String>  axisMarksString = new ArrayList<String>();
     private int           axisLength      = 100;
-    private LatexText     axisTitle       = new LatexText("M^2 [GeV]",0.5,0.0);
-    private Font          axisFont        = new Font("Avenir",Font.PLAIN,14);
+    private LatexText     axisTitle       = new LatexText("",0.5,0.0);
+    private Font          axisFont        = new Font("Avenir",Font.PLAIN,10);
     private double        axisMinimum     = 0.0;
     private double        axisMaximum     = 1.0;
     private boolean       isAxisVertical  = false;
@@ -36,11 +37,15 @@ public class GraphicsAxis {
     private double        axisZoomedMax      = 1.0;
     private boolean       colorBand          = true;
     private boolean       isLogarithmic      = true;
+    private boolean       isRangeFixed       = false;
     
     public GraphicsAxis(){
         
     }
     
+    public void setLog(boolean flag){
+        this.isLogarithmic = flag;
+    }
     public void setVertical(boolean flag){
         this.isAxisVertical = flag;
     }
@@ -49,7 +54,14 @@ public class GraphicsAxis {
         this.axisLength = len;
     }
     
-    public final void setMinMax(double min, double max){
+    public boolean rangeFixed(){
+        return this.isRangeFixed;
+    }
+    
+    public void rangeFixed(boolean flag){
+        this.isRangeFixed = flag;
+    }
+    public void setMinMax(double min, double max){
         this.axisMinimum = min;
         this.axisMaximum = max;
         this.unZoom();
@@ -78,7 +90,11 @@ public class GraphicsAxis {
         this.axisZoomedMax = this.axisMaximum;
     }
     
-    public void setTitleFont(String fontname){
+    public void setAxisFontSize(int size){
+        this.axisFont = new Font("Avenir",Font.BOLD,size);
+    }
+    
+    public void setTitleFont(String fontname){        
         this.axisTitle.setFont(fontname);
     }
     
@@ -86,6 +102,9 @@ public class GraphicsAxis {
         this.axisTitle.setFontSize(size);
     }
     
+    public void setTitle(String title){
+        this.axisTitle.setText(title);
+    }
     public void show(){
         for(int i = 0; i < axisMarks.size(); i++){
             System.out.println(String.format("%4d : %9.4f %25s", i,
@@ -94,14 +113,17 @@ public class GraphicsAxis {
     }
     
     public double getPosition( double value){
-        
-            double range = (this.axisMaximum-this.axisMinimum);
-            double pos   =  this.axisLength*(value-this.axisMinimum)/range;
-            return pos;                        
+        double range = (this.axisMaximum-this.axisMinimum);
+        double pos   =  this.axisLength*(value-this.axisMinimum)/range;
+        return pos;                        
     }
-    
-    public void drawOnCanvas(Graphics2D g2d, int x, int y){
-        
+    /**
+     * Draw the axis on the Canvas graphics object
+     * @param g2d
+     * @param x
+     * @param y 
+     */
+    public void drawOnCanvas(Graphics2D g2d, int x, int y){        
         FontMetrics fm =  g2d.getFontMetrics(this.axisFont);
         g2d.setColor(Color.BLACK);
         g2d.setFont(axisFont);
@@ -116,7 +138,8 @@ public class GraphicsAxis {
                 //System.out.println("drawing tick mark on " + (int) pos);
             }
             int titleOffset = fm.getHeight();
-            Rectangle2D  rect = this.axisTitle.getBounds(fm, g2d);
+            Rectangle2D  rect = this.axisTitle.getBounds(g2d);
+            //this.axisTitle.setFontSize(24);
             g2d.drawString(this.axisTitle.getText().getIterator(), 
                     (int) (x + this.axisLength*0.5 - rect.getWidth()*0.5),
                     y + titleOffset + fm.getHeight());
@@ -139,26 +162,67 @@ public class GraphicsAxis {
 //            g2d.rotate(-Math.PI/2);
             g2d.rotate(-Math.PI/2);
             //int  yoffset = 
-            Rectangle2D  rect = this.axisTitle.getBounds(fm, g2d);
+            Rectangle2D  rect = this.axisTitle.getBounds( g2d);
             int xt = (int) -(y-this.axisLength*0.5+rect.getWidth()*0.5);
             
-            //System.out.println("Drawing Y - title ");
+            //System.out.println("Drawing Y - title ");            
             g2d.drawString(this.axisTitle.getText().getIterator(), xt, (int) (x - maxStringLength - fm.getHeight()));
             g2d.setTransform(orig);
         }
     }
     
+    public void update(Graphics2D  g2d, int width, int height){
+        
+    }
+    
+    public boolean isVertical(){
+        return this.isAxisVertical;
+    }
+    
+    public boolean isLog(){
+        return this.isLogarithmic;
+    }
+    
+    public int  getLength(){
+        return this.axisLength;
+    }
+    
+    public Font getAxisFont(){
+        return this.axisFont;
+    }
+    
     public int getMargin(Graphics2D g2d){
         int margin = 0;
         if(this.isAxisVertical==false){
-            FontMetrics  fma = g2d.getFontMetrics(this.axisFont);            
-            
+            FontMetrics  fma = g2d.getFontMetrics(this.axisFont); 
+            Rectangle2D  region = this.axisTitle.getBounds(g2d);
+            return (int) (fma.getHeight()*1.4 + region.getHeight()*1.5);
         } else {
-            
+            FontMetrics  fma = g2d.getFontMetrics(this.axisFont); 
+            Rectangle2D  region = this.axisTitle.getBounds(g2d);
+            double maxL = 0.0;
+            //System.out.println(" AXIS Strings SIZE = " + this.axisMarksString.size() + "  " + this.axisMarks.size());
+            for(String str : this.axisMarksString){
+                if(fma.stringWidth(str)>maxL){
+                    maxL = fma.stringWidth(str);
+                    //System.out.println(" STRING [" + str + "]  size = " + fma.stringWidth(str) );
+                }
+                //System.out.println("MAXL = " + maxL + "  region Height = " + region.getHeight());
+
+            }
+            return (int) (maxL*1.4 + region.getHeight()*1.5);
         }
-        return margin;
+        
     }
     
+    public List<String>  getAxisMarksString(){
+        return this.axisMarksString;
+    }
+    
+    public List<Double>  getAxisMarks(){
+        return this.axisMarks;
+    }
+            
     public static void main(String[] args){
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

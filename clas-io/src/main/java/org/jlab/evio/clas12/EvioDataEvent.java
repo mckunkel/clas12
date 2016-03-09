@@ -125,6 +125,7 @@ public class EvioDataEvent implements DataEvent {
     }
     
     public EvioCompactStructureHandler getStructureHandler(){
+        //this.eventHandler.getStructure();
         return this.eventHandler.getStructure();
     }
     

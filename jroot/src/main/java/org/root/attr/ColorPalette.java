@@ -134,6 +134,13 @@ public class ColorPalette {
         return palette.get(bin);
     }
     
+    public static void   setColor(int color, int red, int green, int blue, int alpha){
+        ColorPalette.colorPalette.put(color, new Color(red,green,blue,alpha));
+    }
+    
+    public static void   setColor(int color, int red, int green, int blue){
+        ColorPalette.colorPalette.put(color, new Color(red,green,blue));
+    }
     
     public static Color  getColor(int color){
         return ColorPalette.colorPalette.get(color);

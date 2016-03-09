@@ -21,6 +21,7 @@ public class FitterFunction implements FCNBase {
     private IDataSet    dataset;
     private Function1D  function;
     private String      options = "*";
+    
     public FitterFunction(IDataSet ds, Function1D func){
         dataset  = ds;
         function = func;

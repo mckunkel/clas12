@@ -342,7 +342,7 @@ public class H1D implements EvioWritableTree,IDataSet {
     
     public void fit(F1D func, String options){                      
         
-        DataFitter.fit(this.getDataSet(), func, options);
+        DataFitter.fit(this, func, options);
         if(options.contains("Q")==false){
             func.show();
         }
@@ -602,8 +602,19 @@ public class H1D implements EvioWritableTree,IDataSet {
      * @return a DataPoints object of the histogram data
      */
     public GraphErrors getGraph(){
-        GraphErrors  graph = new GraphErrors(this.getAxis().getBinCenters(),
-                this.getData());
+        //GraphErrors  graph = new GraphErrors(this.getAxis().getBinCenters(),
+        //        this.getData());
+        GraphErrors  graph = new GraphErrors();
+        graph.setLineWidth(1);
+        graph.setMarkerSize(2);
+        graph.setTitle(this.getTitle());
+        graph.setXTitle(this.getXTitle());
+        graph.setYTitle(this.getYTitle());
+        int npoints = this.getDataSize();
+        for(int loop = 0; loop < npoints; loop++){
+            graph.add(this.getDataX(loop), this.getDataY(loop), 
+                    this.getErrorX(loop),this.getErrorY(loop) );
+        }
         return graph;
     }
     

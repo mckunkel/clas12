@@ -5,6 +5,7 @@
  */
 package org.root.base;
 
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.font.TextAttribute;
@@ -17,11 +18,13 @@ import java.text.AttributedString;
  */
 public class LatexText {
     
-    private String  textFamily = "Helvetica";
+    private String  textFamily   = "Helvetica";
+    private int     textFontSize = 14;
     private Double  relativeX  = 0.0;
     private Double  relativeY  = 0.0;
     private AttributedString  latexString = null;
     private Integer           textColor   = 1;
+
     
     public LatexText(String text, double xc, double yc){
         this.setText(text);
@@ -40,6 +43,8 @@ public class LatexText {
     public final void setText(String text){
         String ltx  = LatexTextTools.convertUnicode(text);
         latexString = LatexTextTools.converSuperScript(ltx);
+        this.setFont(this.textFamily);
+        this.setFontSize(this.textFontSize);
     }
     
     public final void setLocation(double xr, double yr){
@@ -56,6 +61,7 @@ public class LatexText {
     public AttributedString getText(){ return this.latexString;}
     
     public void setFont(String fontname){
+        this.textFamily = fontname;
         if(this.latexString.getIterator().getEndIndex()>0){
         //System.out.println("INDEX = " + this.latexString.getIterator().getEndIndex());
             latexString.addAttribute(TextAttribute.FAMILY, fontname);
@@ -63,13 +69,22 @@ public class LatexText {
     }
     
     public void setFontSize(int size){
+        this.textFontSize = size;
         if(this.latexString.getIterator().getEndIndex()>0){
-            latexString.addAttribute(TextAttribute.SIZE, (float)size);
+            latexString.addAttribute(TextAttribute.SIZE, (float) size);
         }
     }
     
+    public  Rectangle2D getBounds( Graphics2D g2d){
+        FontMetrics fmg = g2d.getFontMetrics(new Font(this.textFamily,Font.PLAIN,this.textFontSize));
+        Rectangle2D rect = fmg.getStringBounds(this.latexString.getIterator(), 0,
+                this.latexString.getIterator().getEndIndex(),g2d);
+        return rect;
+    }
+    
     public  Rectangle2D getBounds(FontMetrics  fm, Graphics2D g2d){
-        Rectangle2D rect = fm.getStringBounds(this.latexString.getIterator(), 0,
+        FontMetrics fmg = g2d.getFontMetrics(new Font(this.textFamily,Font.PLAIN,this.textFontSize));
+        Rectangle2D rect = fmg.getStringBounds(this.latexString.getIterator(), 0,
                 this.latexString.getIterator().getEndIndex(),g2d);
         return rect;
     }
