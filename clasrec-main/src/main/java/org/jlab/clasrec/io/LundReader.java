@@ -35,6 +35,8 @@ public class LundReader {
     }
     
     public void open(){
+      int nFiles = inputFiles.size();
+      System.out.println("Number of LUND files " + nFiles+ " opened");
         this.openFile(0);
     }
     
