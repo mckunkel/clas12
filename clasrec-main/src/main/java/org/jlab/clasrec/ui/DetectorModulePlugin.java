@@ -69,11 +69,11 @@ public class DetectorModulePlugin extends JDialog implements ActionListener{
                 IDetectorModule module = (IDetectorModule) c.newInstance();
                 this.modules.add(module);
             } catch (ClassNotFoundException ex) {
-                Logger.getLogger(DetectorModulePlugin.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println("Error:  class not found : " + classname);
             } catch (InstantiationException ex) {
-                Logger.getLogger(DetectorModulePlugin.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println("Error: error instansiating class : " + classname);
             } catch (IllegalAccessException ex) {
-                Logger.getLogger(DetectorModulePlugin.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println("Error: illegal access to the class : " + classname);
             }
         }
         

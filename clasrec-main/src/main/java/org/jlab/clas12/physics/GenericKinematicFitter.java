@@ -280,8 +280,15 @@ public class GenericKinematicFitter {
         
         DetectorEvent detEvent = new DetectorEvent();
         if(event.hasBank("EVENT::particle")==true){
-            EvioDataBank  bank = (EvioDataBank)  event.getBank("EVENT::particle");
             
+            float startTime = 0.0f;
+            
+            if(event.hasBank("HEADER::info")==true){
+                EvioDataBank  header = (EvioDataBank) event.getBank("HEADER::info");
+                startTime = header.getFloat("stt", 0);
+            }
+            
+            EvioDataBank  bank = (EvioDataBank)  event.getBank("EVENT::particle");            
             EvioDataBank  bankSC = (EvioDataBank) event.getBank("DETECTOR::scpb");
             EvioDataBank  bankEC = (EvioDataBank) event.getBank("DETECTOR::ecpb");
             EvioDataBank  bankCC = (EvioDataBank) event.getBank("DETECTOR::ccpb");
@@ -319,7 +326,7 @@ public class GenericKinematicFitter {
                             bankSC.getByte("paddle", indexSC)
                     );
                     response.setPath(bankSC.getFloat("path", indexSC));
-                    response.setTime(bankSC.getFloat("time", indexSC));
+                    response.setTime(bankSC.getFloat("time", indexSC)-startTime);
                     response.setEnergy(bankSC.getFloat("edep", indexSC));
                     particle.addResponse(response,false);
                 }
@@ -339,7 +346,7 @@ public class GenericKinematicFitter {
                      resECIN.setEnergy(bankEC.getFloat("ein", indexEC));
                      resECOUT.setEnergy(bankEC.getFloat("eout", indexEC));
                      resECTOT.setEnergy(bankEC.getFloat("etot", indexEC));
-                     double time = bankEC.getFloat("time", indexEC);
+                     double time = bankEC.getFloat("time", indexEC) - startTime;
                      double path = bankEC.getFloat("path", indexEC);
                      
                      resECIN.setTime(time);
@@ -365,7 +372,10 @@ public class GenericKinematicFitter {
                  
                  if(bankCC!=null){
                      DetectorResponse resCC = this.getDetectorResponse_CLAS6_CC(bankCC, indexCC);
-                     if(resCC!=null) particle.addResponse(resCC,false);
+                     if(resCC!=null){
+                         resCC.setTime(resCC.getTime()-startTime);
+                         particle.addResponse(resCC,false);
+                     }
                  }
                 detEvent.addParticle(particle);
             }

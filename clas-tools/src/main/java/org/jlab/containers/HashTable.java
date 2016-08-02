@@ -8,8 +8,11 @@ package org.jlab.containers;
 import java.awt.Color;
 import java.awt.Component;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -70,7 +73,7 @@ public class HashTable extends DefaultTableModel {
             }
         }
         for(int loop = 0; loop < this.columns.size(); loop++){
-            System.out.println(loop + " " + this.columns.get(loop) + "  " + this.types.get(loop));
+           // System.out.println(loop + " " + this.columns.get(loop) + "  " + this.types.get(loop));
         }
     }
     
@@ -105,6 +108,22 @@ public class HashTable extends DefaultTableModel {
         for(int i = 0 ; i < ic; i++) index[i] = Integer.parseInt(values[i]);
         for(int i = ic; i < values.length; i++) array[i-ic] = Integer.parseInt(values[i]);
         this.addRow(array, index);
+    }
+    
+    public void setValueAtAsDouble(String name, double value, int... index){
+        if(this.hasRow(index)==true){
+            int idx = this.getColumnIndex(name);
+            if(idx<0) return;           
+            this.setValueAtAsDouble(idx,value,index);
+        }
+    }
+    
+    public void setValueAtAsInt(String name, int value, int... index){
+        if(this.hasRow(index)==true){
+            int idx = this.getColumnIndex(name);
+            if(idx<0) return;           
+            this.setValueAtAsDouble(idx,value,index);
+        }
     }
     
     public void setValueAtAsDouble(int column, double value, int... index){        
@@ -164,10 +183,42 @@ public class HashTable extends DefaultTableModel {
         return this.hashCollection.getItem(index);
     }
     
+    public boolean   hasRow(int... index){
+        return this.hashCollection.hasItem(index);
+    }
+    
+    public Number getValue(String name, int... index){
+        if(this.hasRow(index)==true){
+            int idx = this.getColumnIndex(name);
+            if(idx<0) return 0;            
+            return this.getRow(index).get(idx);
+        }
+        return 0;
+    }
+    
+    public boolean hasColumn(String name){
+        return (this.getColumnIndex(name)>=0);
+    }
+    
+    private int  getColumnIndex(String name){
+        for(int i = 0; i < this.columns.size(); i++){
+            if(this.columns.get(i).compareTo(name)==0){
+                return i;
+            }
+        }
+        return -1;
+    }
     public void show(){
         this.hashCollection.show();
     }
     
+    public void describe(){
+        
+        for(int i = 0; i < this.columns.size();i++){
+            System.out.println(String.format("* %24s  *  %5s *", this.columns.get(i),
+                    this.types.get(i)));
+        }
+    }
     
     public int getIndexCount(){
         return this.hashCollection.getIndexCount();
@@ -237,6 +288,31 @@ public class HashTable extends DefaultTableModel {
         }
     }
     
+    
+    public void writeFile(String filename){
+        List<String> lines = new ArrayList<String>();
+        for(Map.Entry<Long,TableRow>  rows : this.hashCollection.getMap().entrySet()){
+            long hashcode = rows.getKey();
+            String  keys = String.format("%4d %4d %4d ", 
+                    HashGenerator.getIndex(hashcode, 0), HashGenerator.getIndex(hashcode, 1),
+                    HashGenerator.getIndex(hashcode, 2));
+            lines.add(keys+rows.getValue().stringLine());
+        }
+        try {
+            File logFile=new File(filename);
+            
+            BufferedWriter writer = new BufferedWriter(new FileWriter(logFile));
+            for(String line : lines){
+                writer.write (line);
+            }
+            
+            //Close writer
+            writer.close();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
     @Override
     public Object getValueAt(int row, int column) { 
         Set<Long>  keys = this.hashCollection.getMap().keySet();
@@ -276,9 +352,14 @@ public class HashTable extends DefaultTableModel {
         public boolean isValid(double value){ return (value>=this.MIN&&value<=this.MAX);}
     }
     
+    
+    public void export(String filename){
+        
+    }
+    
     public static void main(String[] args){
         HashTable  table = new HashTable(3,"a","b","c","d");
-        table.readFile("/Users/gavalian/Work/Software/Release-8.0/COATJAVA/coatjava/EC.table");
+        table.readFile("/Users/gavalian/Work/Software/Release-8.0/COATJAVA/coatjava/etc/bankdefs/translation/EC.table");
         /*
         table.addRowAsDouble(new String[]{"21","7","1","0.5","0.1","0.6"});
         table.addRowAsDouble(new String[]{"22","8","2","0.6","0.2","0.7"});

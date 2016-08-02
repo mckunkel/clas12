@@ -28,6 +28,7 @@ public enum DetectorType {
     PCAL      (15, "PCAL"),
     EC        (16, "EC"),
     FTOF      (17, "FTOF"),
+    FTTRK     (18,"FTTRK"),
     ECIN      (110, "ECIN"),
     ECOUT     (111, "ECOUT"),
     ECTOT     (112, "ECTOT"),
@@ -67,6 +68,13 @@ public enum DetectorType {
         name = name.trim();
         for(DetectorType id: DetectorType.values())
             if (id.getName().equalsIgnoreCase(name)) 
+                return id;
+        return UNDEFINED;
+    }
+    public static DetectorType getType(Integer detId) {
+
+        for(DetectorType id: DetectorType.values())
+            if (id.getDetectorId() == detId) 
                 return id;
         return UNDEFINED;
     }

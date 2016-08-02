@@ -6,6 +6,7 @@
 package org.root.basic;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -26,11 +27,11 @@ import org.root.utils.DataFactory;
 public class EmbeddedPad extends JPanel {
     
     DataSetFrame  dataSetFrame = new DataSetFrame();
-    
+    Color bgColor = Color.white;
     public EmbeddedPad(){
         super();
         this.setPreferredSize(new Dimension(500,500));
-        this.dataSetFrame.getAxisFrame().setTitleSize(12);
+        this.dataSetFrame.getAxisFrame().setTitleFontSize(12);
         this.dataSetFrame.getAxisFrame().getAxisX().setTitleSize(12);
         this.dataSetFrame.getAxisFrame().getAxisX().setAxisFontSize(12);
         this.dataSetFrame.getAxisFrame().getAxisY().setTitleSize(12);
@@ -43,7 +44,7 @@ public class EmbeddedPad extends JPanel {
         super();
         this.setPreferredSize(new Dimension(xsize,ysize));
         //this.setSize(500, 500);
-        this.dataSetFrame.getAxisFrame().setTitleSize(12);
+        this.dataSetFrame.getAxisFrame().setTitleFontSize(12);
         this.dataSetFrame.getAxisFrame().getAxisX().setTitleSize(10);
         this.dataSetFrame.getAxisFrame().getAxisX().setAxisFontSize(10);
         this.dataSetFrame.getAxisFrame().getAxisY().setTitleSize(10);
@@ -56,8 +57,10 @@ public class EmbeddedPad extends JPanel {
                 RenderingHints.VALUE_ANTIALIAS_ON);
         int w = this.getSize().width;
         int h = this.getSize().height;
+        g2d.setBackground(bgColor);
         this.dataSetFrame.drawOnCanvas(g2d, 0,0, w, h);
     }
+    
     
     public void draw(IDataSet ds){
         this.dataSetFrame.add(ds);
@@ -67,6 +70,47 @@ public class EmbeddedPad extends JPanel {
     public DataSetFrame  getPad(){
         return this.dataSetFrame;
     }
+    
+    public void setBackgroundColor(Color color){
+    	this.bgColor = color;
+    }
+    
+    public Color getBackgroundColor(){
+    	return this.bgColor;
+    }
+    
+    public void setLogX(boolean logFlag){
+        this.dataSetFrame.getAxisFrame().getAxisX().setLog(logFlag);
+    }
+    
+    public void setLogY(boolean logFlag){
+    	this.dataSetFrame.getAxisFrame().getAxisY().setLog(logFlag);
+    }
+    
+    public void setLogZ(boolean logFlag){
+    	this.dataSetFrame.getAxisFrame().getAxisZ().setLog(logFlag);
+    }
+    
+    
+    
+    public boolean getLogX(){
+       return this.dataSetFrame.getAxisFrame().getAxisX().isLog();
+    }
+    
+    public boolean getLogY(){
+        return this.dataSetFrame.getAxisFrame().getAxisY().isLog();
+    }
+    
+    public boolean getLogZ(){
+        return this.dataSetFrame.getAxisFrame().getAxisZ().isLog();
+    }
+    
+    
+    
+    
+    
+    
+    
     
     public void draw(IDataSet ds, String options){
         this.dataSetFrame.add(ds, options);
@@ -87,12 +131,12 @@ public class EmbeddedPad extends JPanel {
         this.dataSetFrame.getAxisFrame().getAxisY().setTitleSize(size);
     }
     
-    public void setLogZ(boolean flag){
+   /* public void setLogZ(boolean flag){
         this.dataSetFrame.getAxisFrame().getAxisZ().setLog(flag);
-    }
+    }*/
     
     public void setTitleSize(int size){
-        this.dataSetFrame.getAxisFrame().setTitleSize(size);
+        this.dataSetFrame.getAxisFrame().setTitleFontSize(size);
     }
     
     public void setAxisRange(double xmin, double xmax, double ymin, double ymax){
@@ -111,6 +155,26 @@ public class EmbeddedPad extends JPanel {
         }
     }
     
+    public GraphicsAxisFrame  getAxisFrame(){        
+        return this.dataSetFrame.getAxisFrame();
+    }
+    
+    public GraphicsAxis  getAxisX(){
+        return this.dataSetFrame.getAxisFrame().getAxisX();
+    }
+    public GraphicsAxis  getAxisY(){
+        return this.dataSetFrame.getAxisFrame().getAxisY();
+    }
+    public GraphicsAxis  getAxisZ(){
+        return this.dataSetFrame.getAxisFrame().getAxisZ();
+    }
+    public int getDataSetCount(){
+        return this.dataSetFrame.getCollection().getCount();
+    }
+    
+    public IDataSet  getDataSet(int index){
+        return this.dataSetFrame.getCollection().getDataSet(index);
+    }
     
     public static void main(String[] args){
         JFrame frame = new JFrame();

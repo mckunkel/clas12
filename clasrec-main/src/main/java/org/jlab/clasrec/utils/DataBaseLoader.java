@@ -221,7 +221,8 @@ public class DataBaseLoader {
     }
      
     public static ConstantProvider getConstantsFTOF(){
-        DatabaseConstantProvider provider = new DatabaseConstantProvider("mysql://clas12reader@clasdb.jlab.org/clas12");
+        DatabaseConstantProvider provider = // new DatabaseConstantProvider(run,variation);
+                new DatabaseConstantProvider("mysql://clas12reader@clasdb.jlab.org/clas12");
         provider.loadTable("/geometry/ftof/panel1a/paddles");        
         provider.loadTable("/geometry/ftof/panel1a/panel");
         provider.loadTable("/geometry/ftof/panel1b/paddles");

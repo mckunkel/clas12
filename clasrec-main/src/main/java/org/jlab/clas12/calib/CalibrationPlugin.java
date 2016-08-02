@@ -11,7 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import org.jlab.evio.clas12.EvioDataEvent;
-import org.root.pad.EmbeddedCanvas;
+import org.root.pad.TEmbeddedCanvas;
 
 /**
  *
@@ -20,7 +20,7 @@ import org.root.pad.EmbeddedCanvas;
 public abstract class CalibrationPlugin implements ActionListener {
     
     private DetectorH1D     store = new DetectorH1D();
-    private EmbeddedCanvas canvas = new EmbeddedCanvas();
+    private TEmbeddedCanvas canvas = new TEmbeddedCanvas();
     private JPanel         panel  = new JPanel();
     private JTable         table  = new JTable();
     
@@ -38,7 +38,7 @@ public abstract class CalibrationPlugin implements ActionListener {
     public abstract void init();
  
     
-    public EmbeddedCanvas getCanvas() { return this.canvas;}
+    public TEmbeddedCanvas getCanvas() { return this.canvas;}
     public JPanel         getPanel()  { return this.panel;}
     public JTable         getTable()  { return this.table; }
     public DetectorH1D    getStore()  { return this.store; }

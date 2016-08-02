@@ -94,5 +94,5 @@ public interface DataBank {
      * Returns a table model for displaying the bank information
      * @return 
      */
-    TableModel getTableModel();
+    TableModel getTableModel(String mask);
 }

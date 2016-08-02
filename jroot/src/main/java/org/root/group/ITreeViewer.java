@@ -7,7 +7,8 @@ package org.root.group;
 
 import java.util.List;
 import javax.swing.tree.DefaultMutableTreeNode;
-import org.root.pad.EmbeddedCanvas;
+import org.root.basic.EmbeddedCanvas;
+
 import org.root.pad.RootCanvas;
 
 /**

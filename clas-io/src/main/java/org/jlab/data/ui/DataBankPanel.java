@@ -35,6 +35,13 @@ public class DataBankPanel extends JPanel {
         this.setBank(bank);
     }
     
+       public DataBankPanel(DataBank bank, BankEntryMasks masks){
+        super();
+        this.setPreferredSize(new Dimension(600,400));   
+        this.initComponents();
+        this.setBank(bank,masks);
+    }
+
     private void initComponents(){
         this.setLayout(new BorderLayout());
 
@@ -44,12 +51,21 @@ public class DataBankPanel extends JPanel {
         
         //scrollPane.add(table);
         scrollPane = new JScrollPane(table);
+        //scrollPane.setAutoscrolls(true);
         //this.table.setFillsViewportHeight(true);
         this.add(scrollPane,BorderLayout.CENTER);        
     }
     
     public void setBank(DataBank bank){
-        this.table.setModel(bank.getTableModel());
+        this.table.setModel(bank.getTableModel(""));
+    }
+    
+    public void setBank(DataBank bank, BankEntryMasks masks){
+        if(masks.getMask(bank.getDescriptor().getName())==null){
+            this.table.setModel(bank.getTableModel(""));
+        } else {
+            this.table.setModel(bank.getTableModel(masks.getMask(bank.getDescriptor().getName())));
+        }
     }
     
     public static void main(String[] args){

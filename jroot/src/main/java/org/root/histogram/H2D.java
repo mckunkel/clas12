@@ -1,6 +1,7 @@
 package org.root.histogram;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.TreeMap;
 import org.root.attr.Attributes;
 import org.root.base.DataRegion;
@@ -486,6 +487,20 @@ public class H2D implements EvioWritableTree,IDataSet {
             return graph;
         }
         
+        public GraphErrors  getProfileY(){
+            GraphErrors graph = new GraphErrors();
+            int nbinsY = this.getYAxis().getNBins();
+            for(int loop = 0 ; loop < nbinsY; loop++){
+                H1D h1 = this.sliceY(loop);
+                double mean = h1.getMean();
+                double rms  = h1.getRMS();
+                //System.out.println("MEAN = " + mean + "  RMS = " + rms);
+                double bincenter = this.getYAxis().getBinCenter(loop);
+                graph.add(bincenter, mean, 0.0, rms);
+            }
+            return graph;
+        }
+        
 	/**
 	 * Creates a projection of the 2D histogram onto the X Axis, adding up all
 	 * the y bins for each x bin
@@ -590,7 +605,7 @@ public class H2D implements EvioWritableTree,IDataSet {
         }
         
     @Override
-    public TreeMap<Integer, Object> toTreeMap() {
+    public Map<Integer, Object> toTreeMap() {
         TreeMap<Integer, Object> hcontainer = new TreeMap<Integer, Object>();
         hcontainer.put(1, new int[]{2});     
         byte[] nameBytes = this.hName.getBytes();
@@ -605,7 +620,7 @@ public class H2D implements EvioWritableTree,IDataSet {
     }
 
     @Override
-    public void fromTreeMap(TreeMap<Integer, Object> map) {
+    public void fromTreeMap(Map<Integer, Object> map) {
         if(map.get(1) instanceof int[]){
             if(  ((int[]) map.get(1))[0]==2){
                 int[]    nbins      = ((int[]) map.get(3));

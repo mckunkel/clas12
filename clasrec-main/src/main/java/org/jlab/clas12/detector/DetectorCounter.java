@@ -24,6 +24,7 @@ public class DetectorCounter implements IDetectorUnit {
     List<DetectorChannel>     photoTubes = new ArrayList<DetectorChannel>();
     Map<String,Double>  calibrationConstants = new TreeMap<String,Double>();    
     final Line3D        detectorUnitLine = new Line3D();
+    private  long       timeStamp        = 0L;
     
     public DetectorCounter(DetectorType type,int sector, int layer, int component){
         this.descriptor.setType(type);
@@ -39,6 +40,9 @@ public class DetectorCounter implements IDetectorUnit {
     public DetectorDescriptor getDescriptor() {
         return this.descriptor;
     }
+    
+    public void setTimeStamp(long ts){ this.timeStamp = ts;}
+    public long getLongStamp(){return this.timeStamp;}
     
     public void addChannel(DetectorChannel tube){
         this.photoTubes.add(tube);

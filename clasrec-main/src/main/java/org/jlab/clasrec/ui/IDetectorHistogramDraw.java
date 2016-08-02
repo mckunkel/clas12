@@ -5,14 +5,14 @@
  */
 package org.jlab.clasrec.ui;
 
-import org.root.pad.EmbeddedCanvas;
+import org.root.pad.TEmbeddedCanvas;
 
 /**
  *
  * @author gavalian
  */
 public interface IDetectorHistogramDraw {
-    void drawComponent(int sector, int layer, int component, EmbeddedCanvas canvas);
-    void drawLayer(int sector, int layer, EmbeddedCanvas canvas);
-    void drawSector(int sector, EmbeddedCanvas canvas);
+    void drawComponent(int sector, int layer, int component, TEmbeddedCanvas canvas);
+    void drawLayer(int sector, int layer, TEmbeddedCanvas canvas);
+    void drawSector(int sector, TEmbeddedCanvas canvas);
 }

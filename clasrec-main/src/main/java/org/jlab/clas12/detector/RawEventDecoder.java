@@ -375,6 +375,7 @@ public class RawEventDecoder {
                         }
                         
                         bank.setData(shortbuffer);
+                        bank.setTimeStamp(time);
                         //dataBank.addData(channel.intValue(), 
                         //            new RawData(shortbuffer));
                         entries.add(bank);
@@ -438,6 +439,7 @@ public class RawEventDecoder {
                         }
                         
                         bank.setData(shortbuffer);
+                        bank.setTimeStamp(time);
                         //dataBank.addData(channel.intValue(), 
                         //            new RawData(shortbuffer));
                         entries.add(bank);
@@ -523,6 +525,7 @@ public class RawEventDecoder {
                             Short pmax   = (Short) cdataitems.get(position+3);
                             DetectorBankEntry  entry = new DetectorBankEntry(crate,slot,channel);
                             entry.setData(BankType.ADCFPGA, new int[]{tdc, adc, pmin, pmax});
+                            entry.setTimeStamp(time);
                             entries.add(entry);
                             position+=4;
                             //dataBank.addData(channel.intValue(), 
@@ -569,6 +572,7 @@ public class RawEventDecoder {
                         DetectorRawData  entry = new DetectorRawData(crate,slot,channel);
                         //entry.setSVT(half, channel, tdc, adc);
                         entry.set(tdc);
+                        
                         rawdata.add(entry);
                     }
                 }

@@ -24,7 +24,7 @@ import javax.swing.JTabbedPane;
 import org.jlab.clas.detector.DetectorType;
 import org.jlab.clasrec.main.DetectorCalibration;
 import org.jlab.geom.prim.Path3D;
-import org.root.pad.EmbeddedCanvas;
+import org.root.pad.TEmbeddedCanvas;
 
 /**
  *
@@ -35,7 +35,7 @@ public class DetectorShapeTabView extends JPanel implements ActionListener {
     private		      JTabbedPane tabbedPane;
     private final             TreeMap<String, DetectorShapeView2D>  detectorView = new TreeMap<String, DetectorShapeView2D>();
     private DetectorCalibration  calibrationModule = null;
-    private EmbeddedCanvas       drawCanvas        = null;
+    private TEmbeddedCanvas       drawCanvas        = null;
     private String               drawOptions       = "default";
     private List<IDetectorListener>         detectorListeners = new ArrayList<IDetectorListener>();
     
@@ -84,7 +84,7 @@ public class DetectorShapeTabView extends JPanel implements ActionListener {
             entry.getValue().addDetectorListener(lt);
         }
     }
-    public void setCanvas(EmbeddedCanvas cvn){
+    public void setCanvas(TEmbeddedCanvas cvn){
         this.drawCanvas = cvn;
     }
     

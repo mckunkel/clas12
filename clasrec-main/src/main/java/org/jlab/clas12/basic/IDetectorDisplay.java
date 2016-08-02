@@ -5,7 +5,7 @@
  */
 package org.jlab.clas12.basic;
 
-import org.root.pad.EmbeddedCanvas;
+import org.root.pad.TEmbeddedCanvas;
 
 /**
  *
@@ -13,5 +13,5 @@ import org.root.pad.EmbeddedCanvas;
  */
 public interface IDetectorDisplay {
     String[]  getOptions();
-    void draw(EmbeddedCanvas canvas, int sector, int layer, int component, String option);
+    void draw(TEmbeddedCanvas canvas, int sector, int layer, int component, String option);
 }

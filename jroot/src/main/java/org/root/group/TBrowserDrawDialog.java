@@ -22,7 +22,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 import javax.swing.WindowConstants;
-import org.root.pad.EmbeddedCanvas;
+import org.root.basic.EmbeddedCanvas;
+
 import org.root.pad.RootCanvas;
 
 /**

@@ -25,6 +25,7 @@ public class LatexTextTools {
         table.put("#beta" , "\u03B2");
         table.put("#gamma", "\u03B3");
         table.put("#delta"  , "\u03B4");
+        table.put("#Delta"  , "\u0394");
         table.put("#eps"  , "\u03B5");
         table.put("#zeta"  , "\u03B6");
         table.put("#eta"  , "\u03B7");

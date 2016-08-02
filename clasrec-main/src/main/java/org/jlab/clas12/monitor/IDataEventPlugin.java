@@ -8,7 +8,7 @@ package org.jlab.clas12.monitor;
 import java.util.List;
 import org.jlab.data.io.DataEventStore;
 import org.root.base.IDataSet;
-import org.root.pad.EmbeddedCanvas;
+import org.root.pad.TEmbeddedCanvas;
 
 /**
  *
@@ -20,6 +20,6 @@ public interface IDataEventPlugin {
     void     process(DataEventStore store);
     void     init();
     void     reset();
-    void     draw(EmbeddedCanvas canvas);
+    void     draw(TEmbeddedCanvas canvas);
     List<IDataSet>  getDataSets();
 }

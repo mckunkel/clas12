@@ -22,7 +22,7 @@ import org.jlab.clasrec.main.DetectorEventProcessorPane;
 import org.jlab.data.io.DataEvent;
 import org.jlab.evio.clas12.EvioDataEvent;
 import org.root.histogram.H1D;
-import org.root.pad.EmbeddedCanvas;
+import org.root.pad.TEmbeddedCanvas;
 
 /**
  *
@@ -30,7 +30,7 @@ import org.root.pad.EmbeddedCanvas;
  */
 public class EventDecoderViewer extends JPanel implements IDetectorProcessor,MouseListener {
     JTree  dataTree = null;
-    EmbeddedCanvas  canvas = new EmbeddedCanvas();
+    TEmbeddedCanvas  canvas = new TEmbeddedCanvas();
     DetectorEventProcessorPane evPane = new DetectorEventProcessorPane();
     DetectorCollection<H1D>    adcCollection = new DetectorCollection<H1D>();
     EventDecoder                decoder       = new EventDecoder();

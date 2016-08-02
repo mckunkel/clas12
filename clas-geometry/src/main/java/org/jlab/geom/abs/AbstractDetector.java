@@ -129,7 +129,7 @@ public abstract class AbstractDetector<SectorType extends Sector> implements Det
 
     @Override
     public void show() {
-        System.out.print(this);
+        System.out.println(this);
     }
 
     @Override

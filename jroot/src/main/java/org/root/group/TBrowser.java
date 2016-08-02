@@ -23,10 +23,10 @@ import javax.swing.UIManager;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
+import org.root.basic.EmbeddedCanvas;
 import org.root.data.NTuple;
 import org.root.histogram.H1D;
 import org.root.histogram.H2D;
-import org.root.pad.EmbeddedCanvas;
 import org.root.pad.RootCanvas;
 
 /**
@@ -181,7 +181,7 @@ public class TBrowser extends JFrame implements ActionListener {
                     str.append(tp.getPathComponent(loop));
                 }
                 String objectname  = str.toString();
-                this.treeViewer.draw(objectname, "", "", sciCanvas);
+                this.treeViewer.draw(objectname, "", "S", sciCanvas);
                 //tp.getPathComponent(loop);
             }
         }

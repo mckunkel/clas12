@@ -15,7 +15,7 @@ import javax.swing.JSplitPane;
 import org.jlab.clas.detector.ConstantsTable;
 import org.jlab.clas.detector.ConstantsTablePanel;
 import org.jlab.clas.detector.DetectorType;
-import org.root.pad.EmbeddedCanvas;
+import org.root.pad.TEmbeddedCanvas;
 
 /**
  *
@@ -24,7 +24,7 @@ import org.root.pad.EmbeddedCanvas;
 public class CalibrationControlPanel extends JPanel {
     
     String[] buttons = new String[]{"Fit","Custom Fit","View"};
-    EmbeddedCanvas canvas = new EmbeddedCanvas(600,600,1,1);
+    TEmbeddedCanvas canvas = new TEmbeddedCanvas(600,600,1,1);
     ConstantsTablePanel  constPanel = null;
     
     JPanel  buttonPanel   = null;
@@ -97,7 +97,7 @@ public class CalibrationControlPanel extends JPanel {
         JFrame frame = new JFrame();
         frame.setSize(900, 700); 
         CalibrationControlPanel control = new CalibrationControlPanel();
-        control.getTopPane().add(  new EmbeddedCanvas(500,500,1,1));
+        control.getTopPane().add(new TEmbeddedCanvas(500,500,1,1));
         
         control.getButtonPane().add(new JButton("Fit"));
         

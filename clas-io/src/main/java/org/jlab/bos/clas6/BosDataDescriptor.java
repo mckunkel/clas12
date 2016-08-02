@@ -103,5 +103,15 @@ public class BosDataDescriptor implements DataDescriptor {
     public String getPropertyString(String property_name) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    public boolean hasEntry(String entry) {
+        return this.entryTypes.containsKey(entry);
+    }
+
+    public boolean hasEntries(String... entries) {
+        for(String item : entries) 
+            if(this.hasEntry(item)==false) return false;
+        return true;
+    }
     
 }

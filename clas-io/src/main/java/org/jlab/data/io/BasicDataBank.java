@@ -7,7 +7,10 @@
 package org.jlab.data.io;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
@@ -20,11 +23,11 @@ public class BasicDataBank implements DataBank {
      * Defining the containers to hold bank data.
      */
     private Boolean  isUniLength = true;
-    private HashMap<String,short[]>   shortContainer = new HashMap<String,short[]>();
-    private HashMap<String,int[]>     intContainer = new HashMap<String,int[]>();
-    private HashMap<String,float[]>   floatContainer = new HashMap<String,float[]>();
-    private HashMap<String,double[]>  doubleContainer  = new HashMap<String,double[]>();
-    private HashMap<String,byte[]>    byteContainer    = new HashMap<String,byte[]>();
+    private Map<String,short[]>   shortContainer   = new LinkedHashMap<String,short[]>();
+    private Map<String,int[]>     intContainer     = new LinkedHashMap<String,int[]>();
+    private Map<String,float[]>   floatContainer   = new LinkedHashMap<String,float[]>();
+    private Map<String,double[]>  doubleContainer  = new LinkedHashMap<String,double[]>();
+    private Map<String,byte[]>    byteContainer    = new LinkedHashMap<String,byte[]>();
     private DataDescriptor            bankDescriptor;
     
     public BasicDataBank(DataDescriptor desc){
@@ -466,28 +469,52 @@ public class BasicDataBank implements DataBank {
         return 0;
     }
 
-    public TableModel getTableModel() {
-        String[] columns = this.bankDescriptor.getEntryList();
+    public TableModel getTableModel(String mask) {
+        
+        String[] tokens = mask.split(":");
+        Set<String>  entryMask = new HashSet<String>();
+        for(String item : tokens){
+            entryMask.add(item);
+        }
+        
+        String[] columns = null;
+        
+        //String[] cols = this.bankDescriptor.getEntryList();
+        if(entryMask.size()>=2){
+            int ncolumnsToShow = entryMask.size();
+            columns = new String[entryMask.size()];
+            int count = 0;
+            for(String entry : entryMask){
+                columns[count] = entry;
+                count++;
+            }
+        } else {
+            columns = this.bankDescriptor.getEntryList();
+        }
+        
+        
         int nrows = this.rows();
         
         Object[][] objects = new Object[nrows][columns.length];
         for(int loop = 0; loop < columns.length; loop++){
-            for(int row = 0; row < nrows; row++){
-                if(this.byteContainer.containsKey(columns[loop])==true){
-                    objects[row][loop] = new Byte(this.getByte(columns[loop], row));
-                }
-                if(this.shortContainer.containsKey(columns[loop])==true){
-                    objects[row][loop] = new Short(this.getShort(columns[loop], row));
-                }
-                if(this.intContainer.containsKey(columns[loop])==true){
-                    objects[row][loop] = new Integer(this.getInt(columns[loop], row));
-                }
-                if(this.floatContainer.containsKey(columns[loop])==true){
-                    //objects[row][loop] = new Float(this.getFloat(columns[loop], row));
-                    objects[row][loop] = String.format("%12.5f", this.getFloat(columns[loop], row));
-                }
-                if(this.doubleContainer.containsKey(columns[loop])==true){
-                    objects[row][loop] = String.format("%12.5f",this.getDouble(columns[loop], row));
+            if(entryMask.contains(columns[loop])==true||entryMask.size()<2){
+                for(int row = 0; row < nrows; row++){                    
+                    if(this.byteContainer.containsKey(columns[loop])==true){
+                        objects[row][loop] = new Byte(this.getByte(columns[loop], row));
+                    }
+                    if(this.shortContainer.containsKey(columns[loop])==true){
+                        objects[row][loop] = new Short(this.getShort(columns[loop], row));
+                    }
+                    if(this.intContainer.containsKey(columns[loop])==true){
+                        objects[row][loop] = new Integer(this.getInt(columns[loop], row));
+                    }
+                    if(this.floatContainer.containsKey(columns[loop])==true){
+                        //objects[row][loop] = new Float(this.getFloat(columns[loop], row));
+                        objects[row][loop] = String.format("%12.5f", this.getFloat(columns[loop], row));
+                    }
+                    if(this.doubleContainer.containsKey(columns[loop])==true){
+                        objects[row][loop] = String.format("%12.5f",this.getDouble(columns[loop], row));
+                    }
                 }
             }
         }

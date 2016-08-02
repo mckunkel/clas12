@@ -115,9 +115,9 @@ public class NewGraphicsTest extends JPanel implements MouseMotionListener {
         this.frame.getAxisY().setTitleSize(12);
         this.frame.getAxisX().setTitle("X-Title Normalized");
         this.frame.getAxisY().setTitle("Y-Title");
-        this.frame.setTitleSize(12);
-        this.frame.setTitleFont("Avenir");
-        this.frame.setTitleSize(12);
+        this.frame.setTitleFontSize(12);
+        this.frame.setTitleFontName("Avenir");
+        this.frame.setTitleFontSize(12);
         this.frame.setTitle("Axis Test Program");
         this.frame.drawOnCanvas(g2d,0,0, w, h);
         int x = this.frame.getFrameX(6.0);

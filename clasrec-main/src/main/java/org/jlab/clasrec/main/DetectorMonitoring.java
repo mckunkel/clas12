@@ -15,7 +15,7 @@ import org.root.group.PlotGroup;
 import org.root.group.TDirectory;
 import org.root.histogram.H1D;
 import org.root.histogram.H2D;
-import org.root.pad.EmbeddedCanvas;
+import org.root.pad.TEmbeddedCanvas;
 
 /**
  *
@@ -116,15 +116,15 @@ public abstract class DetectorMonitoring implements IDetectorHistogramDraw,IDete
         return hDirectory;
     }    
 
-    public void drawComponent(int sector, int layer, int component, EmbeddedCanvas canvas) {
+    public void drawComponent(int sector, int layer, int component, TEmbeddedCanvas canvas) {
         
     }
 
-    public void drawLayer(int sector, int layer, EmbeddedCanvas canvas) {
+    public void drawLayer(int sector, int layer, TEmbeddedCanvas canvas) {
         
     }
 
-    public void drawSector(int sector, EmbeddedCanvas canvas) {
+    public void drawSector(int sector, TEmbeddedCanvas canvas) {
         
     }
     

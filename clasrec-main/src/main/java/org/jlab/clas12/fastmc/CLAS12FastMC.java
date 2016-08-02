@@ -38,14 +38,37 @@ public class CLAS12FastMC {
     
     private double torusScale = 0.0;
     private double solenoidScale = 0.0;
+    public boolean isSmeared     = true;
+    
     
     public CLAS12FastMC(double torus, double solenoid){
         this.torusScale = torus;
         this.solenoidScale = solenoid;
         
         particleSwimmer = new ParticleSwimmer(torus,solenoid);
+        
         this.initDetectors();
         this.initDetectosHits();
+        if(torus<0){
+            this.addResolutionFunc(   11, new ParticleResolutionCentralIn());
+            this.addResolutionFunc( -211, new ParticleResolutionCentralIn());
+            this.addResolutionFunc( -321, new ParticleResolutionCentralIn());
+            this.addResolutionFunc( -2212, new ParticleResolutionCentralIn());
+            this.addResolutionFunc(  321, new ParticleResolutionCentralOut());
+            this.addResolutionFunc(  211, new ParticleResolutionCentralOut());
+            this.addResolutionFunc(  2212, new ParticleResolutionCentralOut());
+            this.addResolutionFunc(  -11, new ParticleResolutionCentralOut());
+            
+        } else {
+            this.addResolutionFunc(   11, new ParticleResolutionCentralOut());
+            this.addResolutionFunc( -211, new ParticleResolutionCentralOut());
+            this.addResolutionFunc( -321, new ParticleResolutionCentralOut());
+            this.addResolutionFunc( -2212, new ParticleResolutionCentralOut());
+            this.addResolutionFunc(  321, new ParticleResolutionCentralIn());
+            this.addResolutionFunc(  211, new ParticleResolutionCentralIn());
+            this.addResolutionFunc(  2212, new ParticleResolutionCentralIn());
+            this.addResolutionFunc(  -11, new ParticleResolutionCentralIn());
+        }
     }
     
     private void initDetectors(){
@@ -66,8 +89,10 @@ public class CLAS12FastMC {
         this.detectors.put("EC", geomEC);
         double[]  arcLength = new double[]{6.5588, 9.3198, 12.0608,16.1533};
         double[]  ztransform = new double[]{
-            33.51-11.44,33.51-15.38,
-            33.51-19.30,33.51-25.14,
+            11.44 - 33.51/2.0,
+            15.38 - 33.51/2.0,
+            19.30 - 33.51/2.0,
+            25.14 - 33.51/2.0
         };
         
         for(int loop = 0; loop < 4; loop++){
@@ -79,13 +104,18 @@ public class CLAS12FastMC {
             
             Cylindrical3D region = new Cylindrical3D(arc,33.51);
             Transformation3D  trans = new Transformation3D();
-            trans.translateXYZ(0.0, 0.0, -ztransform[loop]);
+            trans.translateXYZ(0.0, 0.0, ztransform[loop]);
             trans.apply(region);
             this.SVTDetector.add(region);
         }
         
     }
     
+    
+    
+    public void setSmearing(boolean flag){
+        this.isSmeared = flag;
+    }
     public void addResolutionFunc(int pid,IParticleResolution res){
         this.pResolutions.put(pid, res);
     }
@@ -112,7 +142,13 @@ public class CLAS12FastMC {
     
     public Particle getParticle(Particle part){
         if(this.isParticleDetected(part)==true){
-            return new Particle(part);
+            Particle detected = new Particle(part);
+            if(this.isSmeared == true){
+                if(this.pResolutions.containsKey(detected.pid())==true){
+                    this.pResolutions.get(detected.pid()).apply(detected, torusScale, solenoidScale);
+                }
+            }
+            return detected;
         }
         return new Particle(part.pid(),0.0,0.0,0.0,0.0,0.0,0.0);
     }
@@ -142,7 +178,7 @@ public class CLAS12FastMC {
                 
         Path3D  path = this.particleSwimmer.particlePath(part);
         Boolean centralStatus = this.isDetectedInCentral(path);
-        if(centralStatus==true) return true;  
+        //if(centralStatus==true) return true;  
         
         List<DetectorHit>  dcHits = this.getDetectorHits("DC", path);
         if(dcHits==null) return false;
@@ -176,7 +212,9 @@ public class CLAS12FastMC {
     }
     
     public PhysicsEvent getEvent(PhysicsEvent genEvent){
+        
         PhysicsEvent recEvent = new PhysicsEvent();
+        
         recEvent.setBeamParticle(genEvent.beamParticle());
         recEvent.setTargetParticle(genEvent.targetParticle());
         
@@ -185,13 +223,23 @@ public class CLAS12FastMC {
                 recEvent.addParticle(new Particle(genEvent.getParticle(loop)));
             }
         }
-        
-        for(int p = 0; p < recEvent.count(); p++){
-            int pid = recEvent.getParticle(p).pid();
-            if(this.pResolutions.containsKey(pid)==true){
-                this.pResolutions.get(pid).apply(recEvent.getParticle(p),this.torusScale,this.solenoidScale);
+        /**
+         * Apply resolution smearing if the flag is set.
+         */
+        if(this.isSmeared==true){
+            for(int p = 0; p < recEvent.count(); p++){
+                int pid = recEvent.getParticle(p).pid();                
+                if(this.pResolutions.containsKey(pid)==true){
+                    this.pResolutions.get(pid).apply(recEvent.getParticle(p),this.torusScale,this.solenoidScale);
+                }
             }
         }
         return recEvent;
+    }
+    
+    public Vector3D  getField(double x, double y, double z){
+        float[] result = new float[3];
+        this.particleSwimmer.getField().field((float) x, (float) y, (float) z, result);
+        return new Vector3D(result[0],result[1],result[2]);
     }
 }

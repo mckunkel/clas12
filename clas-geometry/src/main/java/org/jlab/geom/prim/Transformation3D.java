@@ -222,6 +222,7 @@ public class Transformation3D implements Showable {
          */
         public abstract Transform inverse();
         public abstract String    getName();
+        public abstract double    getValue(int index);
     }
     
     /**
@@ -256,6 +257,15 @@ public class Transformation3D implements Showable {
         public String getName() {
             return "xyx";
         }
+        
+        public double getValue(int index){
+            switch(index){
+                case 0: return this.dx;
+                case 1: return this.dy;
+                case 2: return this.dz;                    
+            }
+            return 0;
+        }
     }
     
     /**
@@ -285,6 +295,10 @@ public class Transformation3D implements Showable {
 
         public String getName() {
             return "rx";
+        }
+        
+        public double getValue(int index){
+             return this.angle;
         }
     }
     
@@ -316,6 +330,10 @@ public class Transformation3D implements Showable {
         public String getName() {
             return "ry";
         }
+        
+        public double getValue(int index){
+             return this.angle;
+        }
     }
     
     /**
@@ -345,6 +363,10 @@ public class Transformation3D implements Showable {
 
         public String getName() {
             return "rz";
+        }
+        
+        public double getValue(int index){
+             return this.angle;
         }
     }
 }

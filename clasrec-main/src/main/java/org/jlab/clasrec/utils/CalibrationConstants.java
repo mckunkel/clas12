@@ -5,9 +5,13 @@
  */
 package org.jlab.clasrec.utils;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.jlab.clas.detector.DetectorCollection;
+import org.jlab.clas.detector.DetectorType;
+import org.jlab.containers.HashTable;
 
 /**
  *
@@ -17,6 +21,9 @@ public class CalibrationConstants {
         
     DetectorCollection<CalibrationEntry>  constantsCollection = new 
         DetectorCollection<CalibrationEntry>();
+    
+    Map<String,String>    calibrationTableNames = new HashMap<String,String>();
+    Map<String,HashTable> calibrationTables     = new HashMap<String,HashTable>();
     
     public CalibrationConstants(){
         
@@ -40,6 +47,56 @@ public class CalibrationConstants {
         }
         
         return 0.0;
+    }
+    
+    public void define(String name, String table){
+        if(this.calibrationTableNames.containsKey(name)==true){
+            System.out.println("[CalibrationConstants] ----> replacing entry for " + name);
+        }
+        this.calibrationTableNames.put(name, table);
+    }
+    
+    public void init(int run, String variation){
+        DatabaseConstantProvider provider = new DatabaseConstantProvider(run,variation);
+        for(Map.Entry<String,String> entry : this.calibrationTableNames.entrySet()){
+            HashTable  table = provider.readTable(entry.getValue());
+            this.calibrationTables.put(entry.getKey(), table);
+        }
+        provider.disconnect();
+    }
+    
+    public boolean hasEntry(String name, int sector, int layer, int component){
+        if(this.calibrationTables.containsKey(name)==false) return false;
+        return this.calibrationTables.get(name).hasRow(sector,layer,component);
+    }
+    
+    public double getEntryDouble(String name, String column, int sector, int layer, int component){
+        if(this.calibrationTables.containsKey(name)==false){
+            return 0.0;
+        }
+        HashTable table = this.calibrationTables.get(name);
+        if(table.hasRow(sector,layer,component)==true&&table.hasColumn(column)){
+            Number value = table.getValue(column, sector,layer,component);
+            if(value instanceof Double) return (Double) value;
+            System.out.println(String.format("(error) : [%3d %3d %3d] value [%s] is not a double.",
+                    sector,layer,component, column));
+        }
+        return 0.0;
+    }
+    
+    public int getEntryInt(String name, String column, int sector, int layer, int component){
+        if(this.calibrationTables.containsKey(name)==false){
+            return 0;
+        }
+        HashTable table = this.calibrationTables.get(name);
+        //System.out.println(" HAS ENTRY  = " + table.hasRow(sector,layer,component));
+        if(table.hasRow(sector,layer,component)==true&&table.hasColumn(column)){
+            Number value = table.getValue(column, sector,layer,component);
+            if(value instanceof Integer) return (Integer) value;
+            System.out.println(String.format("(error) : [%3d %3d %3d] value [%s] is not an integer.",
+                    sector,layer,component, column));
+        }
+        return 0;
     }
     
     public String getPathLast(String path){
@@ -80,15 +137,50 @@ public class CalibrationConstants {
             this.constantsCollection.add(sector, layer, component, entry);            
         }
     }
+    public String getCharString(String symbol,int length) {
+        StringBuilder str = new StringBuilder();
+        for(int i=0;i<length;i++) str.append(symbol);
+        return str.toString();
+    }
     
     public void show(){
         //this.constantsCollection.show();
-        List<CalibrationEntry> entries = this.constantsCollection.getList();
+        /*List<CalibrationEntry> entries = this.constantsCollection.getList();
         for(CalibrationEntry item : entries){
             System.out.println(item);
+        }*/
+        System.out.println("----->  Calibration Constants");
+        System.out.println(this.getCharString("*", 64));
+        for(Map.Entry<String,HashTable>  entry : this.calibrationTables.entrySet()){
+            System.out.println(String.format("* %12s :  COLUMNS = %12d , ROWS = %12d *", 
+                    entry.getKey(),entry.getValue().getColumnCount(),
+                    entry.getValue().getRowCount() ));
         }
+        System.out.println(this.getCharString("*", 64));
     }
     
+    public void setValueAsDouble(String system, String variable, double value, int... index){
+        this.calibrationTables.get(system).setValueAtAsDouble(variable, value, index);
+    }
+    
+    public void setValueAsInt(String system, String variable, int value, int... index){
+        this.calibrationTables.get(system).setValueAtAsInt(variable, value, index);
+    }
+    
+    public void writeFile(String name, String filename){
+        if(this.calibrationTables.containsKey(name)==true){
+            this.calibrationTables.get(name).writeFile(filename);
+        } else {
+            System.out.println("[] ---> error. no calibration table with name "
+            + name + "  exists");
+        }
+    }
+    public void describe(){
+         for(Map.Entry<String,HashTable>  entry : this.calibrationTables.entrySet()){
+            System.out.println("CALIBRATION CONSTANTS : " + entry.getKey());
+            entry.getValue().describe();
+        }
+    }
     public static void main(String[] args){
         
         CalibrationConstants calibGain = new CalibrationConstants();

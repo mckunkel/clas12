@@ -8,6 +8,8 @@ package org.jlab.evio.clas12;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.TreeMap;
 import org.jlab.data.io.DataDescriptor;
 import org.jlab.utils.TablePrintout;
@@ -21,8 +23,8 @@ public class EvioDataDescriptor implements DataDescriptor {
     private Integer descriptorContainerTag = 0;
     private Integer descriptorContainerNum = 0;
     private ArrayList<String> entryNames = new ArrayList<String>();
-    private TreeMap<String,EvioDataDescriptorEntry> descriptorEntries = 
-            new TreeMap<String,EvioDataDescriptorEntry>();
+    private Map<String,EvioDataDescriptorEntry> descriptorEntries = 
+            new LinkedHashMap<String,EvioDataDescriptorEntry>();
     private HashMap<String,String>  descriptorProperties = 
             new HashMap<String,String>();
     
@@ -31,12 +33,34 @@ public class EvioDataDescriptor implements DataDescriptor {
         descriptorProperties.put("parent_tag", parenttag);
         descriptorProperties.put("container_tag", containertag);
     }
+    public EvioDataDescriptor(String format){
+        this.init(format);
+    }
     
     @Override
     public void init(String s) {
         descriptorEntries.clear();
-        String[] tokens = s.split(":");
+        String[] tokens = s.split("/");
+        System.out.println(" N - tokens = " + tokens.length);
+        String[] header = tokens[0].split(":");
+        this.descriptorName = header[0] + "::" + header[1];
+        String section_name = header[1];
+        this.descriptorContainerTag = Integer.parseInt(header[2]);
+        this.descriptorContainerNum = Integer.parseInt(header[3]);
+        this.descriptorProperties.put("parent_tag", header[2]);
+        this.descriptorProperties.put("container_tag", header[3]);
+        Integer  sectionTag = Integer.parseInt(header[3]);
+        
+        for(int loop = 1; loop < tokens.length;loop++){
+            String[]  entryParams = tokens[loop].split(":");
+            this.addEntry(this.descriptorName, entryParams[0], 
+                    sectionTag, 
+                    Integer.parseInt(entryParams[1]) , 
+                    entryParams[2] );
+        }
+        /*
         descriptorName  = tokens[0];
+        
         descriptorContainerTag = Integer.parseInt(tokens[1]);
         descriptorContainerNum = Integer.parseInt(tokens[2]);
         ArrayList<String> nnn = new ArrayList<String>();
@@ -48,7 +72,7 @@ public class EvioDataDescriptor implements DataDescriptor {
                             Integer.parseInt(tokens[loop+2]),
                             tokens[loop+3]
                     ));
-        }
+        }*/
         //entryNames = new String[nnn.size()];
         //for(int loop = 0; loop < nnn.size(); loop++){
         //    entryNames[loop] = nnn.get(loop);
@@ -126,7 +150,7 @@ public class EvioDataDescriptor implements DataDescriptor {
             String[] tdata = new String[4];
             tdata[0] = item;
             tdata[1] = descriptorEntries.get(item).tag.toString();
-            tdata[2] = descriptorEntries.get(item).num.toString();;
+            tdata[2] = descriptorEntries.get(item).num.toString();
             tdata[3] = descriptorEntries.get(item).type.stringName();
             table.addData(tdata);
         }
@@ -139,7 +163,8 @@ public class EvioDataDescriptor implements DataDescriptor {
         
         return str.toString();
     }
-
+    
+    
     @Override
     public void setPropertyString(String name, String value) {
         if(descriptorProperties.containsKey(name)==true){
@@ -156,4 +181,43 @@ public class EvioDataDescriptor implements DataDescriptor {
         return null;
     }
     
+    @Override
+    public String toString(){
+        StringBuilder str = new StringBuilder();
+        str.append(this.descriptorName.replace("::", ":"));
+        str.append(":");
+        str.append(this.descriptorProperties.get("parent_tag"));
+        str.append(":");
+        str.append(this.descriptorProperties.get("container_tag"));
+        
+        //for(Map.Entry<String,EvioDataDescriptorEntry> entry : this.descriptorEntries.entrySet()){
+        for(String item : this.getEntryList()){
+            str.append("/");
+            str.append(this.descriptorEntries.get(item).name);
+            str.append(":");
+            str.append(this.descriptorEntries.get(item).num);
+            str.append(":");
+            str.append(this.descriptorEntries.get(item).type.stringName());
+        }
+        return str.toString();
+    }
+    
+    public static void main(String[] args){
+        EvioDataDescriptor desc = new EvioDataDescriptor("DC::true","120","0");
+        desc.init("DC:true:1200:1201/sector:1:float64/layer:2:int64/wire:3:int64");
+        desc.show();
+        System.out.println(desc);
+        EvioDataDescriptor desc2 = new EvioDataDescriptor(desc.toString());
+        desc2.show();
+    }
+
+    public boolean hasEntry(String entry) {
+        return this.descriptorEntries.containsKey(entry);
+    }
+
+    public boolean hasEntries(String... entries) {
+        for(String item : entries) 
+            if(this.hasEntry(item)==false) return false;
+        return true;
+    }
 }

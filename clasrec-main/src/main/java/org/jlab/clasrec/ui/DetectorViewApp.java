@@ -40,7 +40,7 @@ import org.jlab.geom.gui.DetectorLayerUI;
 import org.jlab.geom.gui.DetectorViewPanel;
 import org.jlab.geom.gui.IDetectorComponentSelection;
 
-import org.root.pad.EmbeddedCanvas;
+import org.root.pad.TEmbeddedCanvas;
 
 /**
  *
@@ -49,7 +49,7 @@ import org.root.pad.EmbeddedCanvas;
 public class DetectorViewApp extends JFrame implements IDetectorComponentSelection,ActionListener {
     
     private JSplitPane splitPane;
-    private EmbeddedCanvas canvas;
+    private TEmbeddedCanvas canvas;
     private DetectorViewPanel detectorView;
     private IDetectorHistogramDraw histogramDrawer = null;
     private DetectorMonitoring     monitoringClass = null;
@@ -160,7 +160,7 @@ public class DetectorViewApp extends JFrame implements IDetectorComponentSelecti
         splitPane.setPreferredSize(new Dimension(1200,900));
         splitPane.setDividerLocation(900);
         
-        canvas = new EmbeddedCanvas(800,400,3,1);
+        canvas = new TEmbeddedCanvas(800,400,3,1);
         detectorView = new DetectorViewPanel();
         
         splitPane.setLeftComponent(this.detectorView);

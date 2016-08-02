@@ -80,11 +80,11 @@ public class PlotDirectory {
             for(Map.Entry<String,Object> objects : groupObjects.entrySet()){
                 Object dataObject = objects.getValue();
                 if(dataObject instanceof EvioWritableTree){
-                    TreeMap<Integer,Object> tree = ((EvioWritableTree) dataObject).toTreeMap();
+                    Map<Integer,Object> tree = ((EvioWritableTree) dataObject).toTreeMap();
                     String absolutePath = dirname + "/" + objects.getKey();
                     byte[] nameBytes = absolutePath.getBytes();
                     tree.put(6, nameBytes);
-                    outStream.writeTree(tree);
+                    //outStream.writeTree(tree);
                     System.out.println(" Saving : [" + dirname + "]  [" 
                             +  objects.getKey() + "]");
                 }

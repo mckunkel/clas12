@@ -8,6 +8,7 @@ package org.root.func;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.TreeMap;
 import org.root.attr.Attributes;
 import org.root.base.DataRegion;
@@ -25,7 +26,7 @@ public class F1D extends Function1D implements EvioWritableTree,IDataSet {
     private String  functionString = "";
     private String functionName = "f1";
     private Integer functionDrawResolution = 200;
-    private Attributes attr = new Attributes();
+    //private Attributes attr = new Attributes();
     
     public F1D(String function){
         super();
@@ -58,6 +59,10 @@ public class F1D extends Function1D implements EvioWritableTree,IDataSet {
     
     public double getParameter(int par){
         return this.parameter(par).value();
+    }
+    
+    public double getParError(int par){
+        return this.parameter(par).error();
     }
     
     private void initParameters(){
@@ -205,7 +210,8 @@ public class F1D extends Function1D implements EvioWritableTree,IDataSet {
         return result;
     }
 
-    public TreeMap<Integer, Object> toTreeMap() {
+    @Override
+    public Map<Integer, Object> toTreeMap() {
         TreeMap<Integer, Object> hcontainer = new TreeMap<Integer, Object>();
         hcontainer.put(1, new int[]{7});
         //hcontainer.put(2, new int[]{1});
@@ -229,7 +235,8 @@ public class F1D extends Function1D implements EvioWritableTree,IDataSet {
         return hcontainer;
     }
 
-    public void fromTreeMap(TreeMap<Integer, Object> map) {
+    @Override
+    public void fromTreeMap(Map<Integer, Object> map) {
         if(map.containsKey(1)==true){
             if(map.get(1) instanceof int[]){
                 int[] type = (int[]) map.get(1);
@@ -295,9 +302,10 @@ public class F1D extends Function1D implements EvioWritableTree,IDataSet {
         return 0.0;
     }
 
+    /*
     public Attributes getAttributes() {
         return this.attr;
-    }
+    }*/
 
     public Double getData(int x, int y) {
         return 0.0;

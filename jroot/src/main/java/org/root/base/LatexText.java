@@ -23,6 +23,7 @@ public class LatexText {
     private Double  relativeX  = 0.0;
     private Double  relativeY  = 0.0;
     private AttributedString  latexString = null;
+    private String asciiString = "";
     private Integer           textColor   = 1;
 
     
@@ -41,10 +42,15 @@ public class LatexText {
     }
      
     public final void setText(String text){
+    	asciiString = text;
         String ltx  = LatexTextTools.convertUnicode(text);
         latexString = LatexTextTools.converSuperScript(ltx);
         this.setFont(this.textFamily);
         this.setFontSize(this.textFontSize);
+    }
+    
+    public final String getTextString(){
+        return asciiString;
     }
     
     public final void setLocation(double xr, double yr){

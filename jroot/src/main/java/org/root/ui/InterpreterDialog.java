@@ -18,8 +18,8 @@ import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+import org.root.basic.EmbeddedCanvas;
 import org.root.data.NTuple;
-import org.root.pad.EmbeddedCanvas;
 import org.root.pad.RootCanvas;
 
 /**

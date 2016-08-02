@@ -27,6 +27,7 @@ public class GraphicsAxisDouble {
     private double         axisAngle    = 0.0;
     private int            axisMaxTicks = 10;
     private String         textOutputFormat = "%.1f";
+    
     public GraphicsAxisDouble(){
         
     }

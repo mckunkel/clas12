@@ -81,6 +81,7 @@ public class GraphAxis {
         this.axisScale.setMaxTicks(div);
     }
     
+    
     public int getOriginX(){ return axisOrigin.x;}
     public int getOriginY(){ return axisOrigin.y;}
     

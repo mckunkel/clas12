@@ -7,6 +7,8 @@ package org.root.func;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.objecthunter.exp4j.Expression;
+import net.objecthunter.exp4j.function.Function;
 import org.root.attr.Attributes;
 import org.root.base.DataRegion;
 import org.root.base.IDataSet;
@@ -24,7 +26,29 @@ public class Func1D implements IDataSet {
     private  double  functionRangeMin   = 0.0;
     private  double  functionRangeMax   = 1.0;
     private final    List<RealParameter>  funcParams = new ArrayList<RealParameter>();
-        
+    Expression       expr = null;
+    
+    Function gausFunc = new Function("gaus", 3) {
+        @Override
+        public double apply(double... args) {
+            return FunctionFactory.gauss(args[0],args[1],args[2]);
+        }
+    };
+    
+    Function landauFunc = new Function("landau", 3) {
+        @Override
+        public double apply(double... args) {
+            return FunctionFactory.landau(args[0],args[1],args[2]);
+        }
+    };
+    
+    Function erfFunc = new Function("erf", 1) {
+        @Override
+        public double apply(double... args) {
+            return ErrorFunction.erf(args[0]);
+        }
+    };    
+    
     private Attributes attr = new Attributes();
     
     public Func1D(String name, double xmin, double xmax, int nparam){
@@ -120,6 +144,10 @@ public class Func1D implements IDataSet {
         this.functionRangeMax = max;
     }
     
+    public final void initFunctionWithLine(String function){
+        
+    }
+    
     public void setName(String name) {
         this.funcName = name;
     }
@@ -152,18 +180,22 @@ public class Func1D implements IDataSet {
         return region;
     }
 
+    @Override
     public Integer getDataSize() {
         return this.funcDrawResolution;
     }
 
+    @Override
     public Integer getDataSize(int axis) {
         return this.funcDrawResolution;
     }
 
+    @Override
     public Double getData(int x, int y) {
         return 0.0;
     }
 
+    @Override
     public Double getDataX(int index) {
         double step = (this.getMax()-this.getMin())/this.funcDrawResolution;
         return this.getMin() + index*step;
@@ -173,19 +205,23 @@ public class Func1D implements IDataSet {
         return 1.0;
     }
     
+    @Override
     public Double getDataY(int index) {
         double x = this.getDataX(index);
         return this.eval(x);
     }
 
+    @Override
     public Double getErrorX(int index) {
         return 0.0;
     }
 
+    @Override
     public Double getErrorY(int index) {
         return 0.0;
     }
 
+    @Override
     public Attributes getAttributes() {
         return this.attr;
     }

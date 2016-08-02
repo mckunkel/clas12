@@ -38,7 +38,11 @@ public class GraphicsAxis {
     private boolean       colorBand          = true;
     private boolean       isLogarithmic      = true;
     private boolean       isRangeFixed       = false;
-    
+    private String        axisFontName       = "Avenir";
+    private int           axisFontSize       = 10;
+    private String        axisTitleFontName  = "Avenir";
+    private int           axisTitleFontSize  = 12;
+        
     public GraphicsAxis(){
         
     }
@@ -56,6 +60,14 @@ public class GraphicsAxis {
     
     public boolean rangeFixed(){
         return this.isRangeFixed;
+    }
+    
+    public double getMin(){
+        return this.axisMinimum;
+    }
+    
+    public double getMax(){
+        return this.axisMaximum;
     }
     
     public void rangeFixed(boolean flag){
@@ -90,17 +102,59 @@ public class GraphicsAxis {
         this.axisZoomedMax = this.axisMaximum;
     }
     
+    public int  getAxisFontSize(){
+        return this.axisFontSize;
+    }
+    
+    public String getAxisFontName(){
+        return this.axisFontName;
+    }
+    
+    public String getAxisTitleFontName(){
+        return this.axisTitleFontName;
+    }
+    
+    public int getAxisTitleFontSize(){
+        return this.axisTitleFontSize;
+    }
+    
     public void setAxisFontSize(int size){
-        this.axisFont = new Font("Avenir",Font.BOLD,size);
+        this.axisFontSize = size;
+        //this.axisFont = new Font("Avenir",Font.BOLD,size);
+        this.axisFont     = new Font(this.axisFontName,Font.PLAIN, this.axisFontSize);
+    }
+    
+    public void setAxisFontName(String name){
+        this.axisFontName = name;
+        this.axisFont     = new Font(this.axisFontName,Font.PLAIN, this.axisFontSize);
     }
     
     public void setTitleFont(String fontname){        
         this.axisTitle.setFont(fontname);
     }
     
+    public void setTitleFontName(String fontname){ 
+        this.axisTitleFontName = fontname;
+        this.axisTitle.setFont(fontname);
+    }
+    
+    public void setTitleFontSize(int size){
+        this.axisTitleFontSize = size;
+        this.axisTitle.setFontSize(size);
+    }
+    
     public void setTitleSize(int size){
         this.axisTitle.setFontSize(size);
     }
+    
+    public String getTitle(){
+        return this.axisTitle.toString();
+    }
+    
+    public String getTitleString(){
+        return this.axisTitle.getTextString();
+    }
+    
     
     public void setTitle(String title){
         this.axisTitle.setText(title);
@@ -171,6 +225,7 @@ public class GraphicsAxis {
         }
     }
     
+    
     public void update(Graphics2D  g2d, int width, int height){
         
     }
@@ -211,8 +266,7 @@ public class GraphicsAxis {
 
             }
             return (int) (maxL*1.4 + region.getHeight()*1.5);
-        }
-        
+        }        
     }
     
     public List<String>  getAxisMarksString(){

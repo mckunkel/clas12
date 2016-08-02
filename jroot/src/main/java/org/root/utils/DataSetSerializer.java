@@ -9,6 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,7 +25,7 @@ import org.root.histogram.H2D;
 public class DataSetSerializer {
     public static byte[] getByteArray(EvioWritableTree h){
         try {
-            TreeMap<Integer,Object> tree = h.toTreeMap();
+            Map<Integer,Object> tree = h.toTreeMap();
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             ObjectOutput out = null;
                

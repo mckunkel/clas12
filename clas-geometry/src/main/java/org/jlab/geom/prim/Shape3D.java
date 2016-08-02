@@ -247,6 +247,23 @@ public class Shape3D implements Transformable, Showable {
         return str.toString();
     }
     
+    public static Shape3D  box(double xd, double yd, double zd){
+        
+        Shape3D  shapeBox = new Shape3D();
+        shapeBox.addFace(new Triangle3D(
+                 xd/2.0,-yd/2.0,-zd/2.0,
+                 xd/2.0, yd/2.0,-zd/2.0,
+                -xd/2.0, yd/2.0,-zd/2.0)
+                );
+        shapeBox.addFace(new Triangle3D(
+                -xd/2.0, yd/2.0,-zd/2.0,
+                -xd/2.0,-yd/2.0,-zd/2.0,
+                xd/2.0,-yd/2.0,-zd/2.0)
+                );
+        
+        return   shapeBox;
+    }
+    
     public String getMeshFXML(){
         StringBuilder str = new StringBuilder();
         str.append("\t<mesh>\n");

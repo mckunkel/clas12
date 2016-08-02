@@ -11,7 +11,7 @@ import org.jlab.clasrec.main.DetectorMonitoring;
 import org.jlab.clasrec.ui.IDetectorHistogramDraw;
 import org.jlab.evio.clas12.EvioDataEvent;
 import org.jlab.evio.clas12.EvioSource;
-import org.root.pad.EmbeddedCanvas;
+import org.root.pad.TEmbeddedCanvas;
 
 /**
  *
@@ -55,15 +55,15 @@ public class CLASMonitoring implements IDetectorHistogramDraw {
         detectorFactory.get(0).analyze();
     }
 
-    public void drawComponent(int sector, int layer, int component, EmbeddedCanvas canvas) {
+    public void drawComponent(int sector, int layer, int component, TEmbeddedCanvas canvas) {
         
     }
 
-    public void drawLayer(int sector, int layer, EmbeddedCanvas canvas) {
+    public void drawLayer(int sector, int layer, TEmbeddedCanvas canvas) {
         
     }
 
-    public void drawSector(int sector, EmbeddedCanvas canvas) {
+    public void drawSector(int sector, TEmbeddedCanvas canvas) {
         
     }
 }

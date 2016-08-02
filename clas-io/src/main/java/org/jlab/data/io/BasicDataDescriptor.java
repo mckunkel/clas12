@@ -8,6 +8,7 @@ package org.jlab.data.io;
 
 import java.util.HashMap;
 
+
 /**
  *
  * @author gavalian
@@ -15,7 +16,7 @@ import java.util.HashMap;
 public class BasicDataDescriptor implements DataDescriptor {
     private HashMap<String,String> descProperties = new HashMap<String,String>();
     private String descName = "UNDEF";
-    
+    private String jsonObjectString = "";
     
     public BasicDataDescriptor(String name){
         descName = name;
@@ -23,7 +24,7 @@ public class BasicDataDescriptor implements DataDescriptor {
             
     @Override
     public void init(String s) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //JSonObject model = new Json.createObjectBuilder();
     }
 
     @Override
@@ -63,6 +64,14 @@ public class BasicDataDescriptor implements DataDescriptor {
 
     @Override
     public void show() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public boolean hasEntry(String entry) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public boolean hasEntries(String... entries) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

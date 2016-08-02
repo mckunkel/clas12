@@ -6,18 +6,22 @@
 
 package org.jlab.clasrec.main;
 
+import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.TreeMap;
+
+import org.jlab.clara.base.ClaraUtil;
+import org.jlab.clara.engine.Engine;
+import org.jlab.clara.engine.EngineData;
+import org.jlab.clara.engine.EngineDataType;
+import org.jlab.clara.engine.EngineStatus;
 import org.jlab.clas.detector.DetectorType;
-import org.jlab.clas12.tools.MimeType;
+import org.jlab.clasrec.data.Clas12Types;
 import org.jlab.clasrec.utils.DataBaseLoader;
 import org.jlab.clasrec.utils.DatabaseConstantProvider;
 import org.jlab.clasrec.utils.ServiceConfiguration;
-import org.jlab.coda.clara.core.ICService;
-import org.jlab.coda.clara.core.JioSerial;
-import org.jlab.coda.clara.system.CConstants;
-import org.jlab.coda.clara.system.CUtil;
 import org.jlab.evio.clas12.EvioDataEvent;
 import org.jlab.evio.clas12.EvioFactory;
 import org.jlab.geom.base.ConstantProvider;
@@ -32,7 +36,7 @@ import org.jlab.geom.detector.ftof.FTOFFactory;
  * @author gavalian
  */
 
-public abstract class DetectorReconstruction implements ICService {
+public abstract class DetectorReconstruction implements Engine {
     
     private String serviceName     = "undefined";
     private String serviceVersion  = "1.0";
@@ -219,64 +223,70 @@ public abstract class DetectorReconstruction implements ICService {
     }
     
     @Override
-    public void configure(JioSerial js) {
+    public EngineData configure(EngineData js) {        
         this.init();
+        return js;
     }
 
     @Override
-    public JioSerial execute(JioSerial data) {
-        JioSerial output = data;
+    public EngineData execute(EngineData input) {
+        EngineData output = input;
  
         // Validate input type
-        MimeType mt = data.getMimeType();
-        if (mt != MimeType.EVIO) {
+        String mt = input.getMimeType();
+        if (!mt.equalsIgnoreCase(Clas12Types.EVIO.mimeType())) {
             String msg = String.format("Wrong input type: %s", mt);
-            output.setStatus(CConstants.error);
-            output.setDataDescription(msg);
+            output.setStatus(EngineStatus.ERROR);
+            output.setDescription(msg);
             return output;
         }
         
         EvioDataEvent dataevent = null;
         try {
-            byte[] buffer = data.getDataAsByteArray();
-            ByteOrder endianness = data.getDataEndianness();
+            ByteBuffer bb = (ByteBuffer) input.getData();
+            byte[] buffer = bb.array();
+            ByteOrder endianness = bb.order();
             dataevent = new EvioDataEvent(buffer, endianness, EvioFactory.getDictionary());
         } catch (/* EvioException */ Exception e) {
             // Actually, EvioDataEvent is not throwing any exception, but I think it should.
             // Why having an EvioDataEvent that failed to extract the event?
-            String msg = String.format("Error reading input event%n%n%s", CUtil.reportException(e));
-            output.setStatus(CConstants.error);
-            output.setDataDescription(msg);
+            String msg = String.format("Error reading input event%n%n%s", ClaraUtil.reportException(e));
+            output.setStatus(EngineStatus.ERROR);
+            output.setDescription(msg);
             return output;
         }
         try {
             this.processEvent(dataevent);
         } catch (Exception e) {
-            String msg = String.format("Error processing input event%n%n%s", CUtil.reportException(e));
-            output.setStatus(CConstants.error);
-            output.setDataDescription(msg);
+            String msg = String.format("Error processing input event%n%n%s", ClaraUtil.reportException(e));
+            output.setStatus(EngineStatus.ERROR);
+            output.setDescription(msg);
             return output;
         }
  
         // Save event.
-        output.setData(dataevent.getEventBuffer(), MimeType.EVIO);
+        output.setData(Clas12Types.EVIO.mimeType(), dataevent.getEventBuffer());
  
         return output;
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public JioSerial execute(JioSerial[] jss) {
+    public EngineData executeGroup(Set<EngineData> inputs) {
         return null;
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void destruct() {
+    public void destroy() {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
+    @Deprecated
+    public void destruct() {
+        destroy();
+    }
+
     public String getName() {
         return serviceName;
     }
@@ -296,8 +306,32 @@ public abstract class DetectorReconstruction implements ICService {
         return serviceVersion;
     }
 
-    @Override
+    @Deprecated
     public String getLanguage() {
         return "java";
+    }
+
+    @Override
+    public Set<EngineDataType> getInputDataTypes() {
+        return ClaraUtil.buildDataTypes(Clas12Types.EVIO,
+                                        Clas12Types.PROPERTY_LIST,
+                                        EngineDataType.STRING);
+    }
+
+    @Override
+    public Set<EngineDataType> getOutputDataTypes() {
+        return ClaraUtil.buildDataTypes(Clas12Types.EVIO,
+                                        Clas12Types.PROPERTY_LIST,
+                                        EngineDataType.STRING);
+    }
+
+    @Override
+    public Set<String> getStates() {
+        return null;
+    }
+
+    @Override
+    public void reset() {
+        // nothing
     }
 }

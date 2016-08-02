@@ -14,7 +14,7 @@ import org.jlab.clas12.calib.DetectorShape2D;
 import org.jlab.clas12.calib.DetectorShapeView2D;
 
 import org.jlab.evio.clas12.EvioDataEvent;
-import org.root.pad.EmbeddedCanvas;
+import org.root.pad.TEmbeddedCanvas;
 
 /**
  *
@@ -193,7 +193,7 @@ public abstract class DetectorCalibration {
         return detectorList;
     }
     
-    public void draw(EmbeddedCanvas canvas, DetectorDescriptor desc, String option){
+    public void draw(TEmbeddedCanvas canvas, DetectorDescriptor desc, String option){
         System.out.println("DRAWING ON CANVAS : " + desc.toString() );
         System.out.println("\t OPTIONS =      : " + option );
         canvas.divide(2, 2);

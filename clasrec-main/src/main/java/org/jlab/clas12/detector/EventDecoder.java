@@ -74,6 +74,10 @@ public class EventDecoder {
         this.pulseFitters.put(type, fitter);
     }
     
+    public void  readDataEntries(EvioDataEvent event){
+        this.dataEntries = this.rawDecoder.getDataEntries(event);
+    }
+    
     public void  decode(EvioDataEvent event){
         
         this.benchMark.resume("RAW-DECODER");

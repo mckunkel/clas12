@@ -17,7 +17,7 @@ import javax.swing.JTabbedPane;
 import org.jlab.clasrec.main.DetectorCalibration;
 import org.jlab.evio.clas12.EvioDataEvent;
 import org.root.attr.TStyle;
-import org.root.pad.EmbeddedCanvas;
+import org.root.pad.TEmbeddedCanvas;
 
 /**
  *
@@ -26,7 +26,7 @@ import org.root.pad.EmbeddedCanvas;
 public class DetectorCalibrationFrame extends JInternalFrame implements ActionListener {
     
     JSplitPane       splitPane = new JSplitPane();
-    EmbeddedCanvas   canvas    = new EmbeddedCanvas();
+    TEmbeddedCanvas   canvas    = new TEmbeddedCanvas();
     DetectorShapeTabView tabView = null;
     private		      JTabbedPane rightTabbedPane = null;
     

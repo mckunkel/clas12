@@ -6,6 +6,11 @@
 package org.root.attr;
 
 import java.awt.Color;
+import java.awt.GraphicsEnvironment;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -26,7 +31,50 @@ public class TStyle {
     private static Integer statBoxFontSize       = 18;
     private static Boolean statBoxOptions        = true;
     private static Double  statBoxTextGap        = 1.2;
+    public  static List<String>    systemFontNames       = TStyle.getSystemFontList();
+    
             
+    public static List<String>  getSystemFontList(){
+        Set<String>  fontSet = new HashSet<String>();
+        List<String> fontList = new ArrayList<String>();
+
+        fontSet.add("Avenir");
+        fontSet.add("Arial");
+        fontSet.add("American Typewriter");
+        fontSet.add("Bradley Hand");
+        fontSet.add("Chalkduster");
+        fontSet.add("Charter");
+        fontSet.add("Courier");
+        fontSet.add("HanziPen TC");
+        fontSet.add("Helvetica");
+        fontSet.add("Helvetica Neue");
+        fontSet.add("Menlo");
+        fontSet.add("Monaco");
+        fontSet.add("Monospaced");
+        fontSet.add("SansSerif");
+        fontSet.add("Times");
+        fontSet.add("Times New Roman");
+        fontSet.add("Veranda");
+        // Check if the system contains the fonts that we want the user
+        // to use. If so, add them to available list
+        String[] fonts = 
+                GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
+        if(fonts!=null){
+            for(String fontname : fonts){
+                if(fontSet.contains(fontname)==true){
+                    fontList.add(fontname);
+                }
+            }
+        }
+        System.out.println("[SystemFonts] ---> set size = " + fontSet.size()
+        + ", available " + fontList.size());
+        return fontList;
+    }
+    
+    public static List<String>   systemFonts(){
+        return TStyle.systemFontNames;
+    }
+    
     public  static void setAxisFont(String name, int size){
         TStyle.axisFontStringName = name;
         TStyle.axisFontSize = size;

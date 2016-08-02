@@ -77,7 +77,7 @@ public class ColorPalette {
         
         if(mode==3){
             palette.clear();
-            palette.add(new Color(245,245,245));
+            //palette.add(new Color(245,245,245));
             for(int loop = 0; loop < red.length; loop++){
                 int pred   = (int) (255.0*red[loop]);
                 int pgreen = (int) (255.0*green[loop]);
@@ -100,18 +100,18 @@ public class ColorPalette {
         
         if(max!=0){
             if(islog==true){
-                fraction = Math.log(value)/Math.log(max);
+                fraction = Math.log(value+1.0)/Math.log(max);
             } else {
                 fraction = value/max;
             }
         }
         
         if(fraction>1.0) fraction = 1.0;
-        if(fraction<0.0){
-            return new Color(40,40,40);
-        }
-        
-        
+        if(fraction<=0.0){
+            return new Color(200,200,200);
+        }        
+        //System.out.println("PALETTE MAX = " + max + " LOG = " + islog + " VALUE = " + value +
+        //        "  FRACTION = " + fraction + "  NEW FRACTION = " + (value/max));
         double binC = fraction*palette.size();
         int bin = (int) binC;
         if(bin>=palette.size()) bin = palette.size()-1;

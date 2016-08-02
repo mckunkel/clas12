@@ -4,10 +4,10 @@
 #  JEVIO
 REPO="/Users/gavalian/Work/MavenRepo"
 
-mvn org.apache.maven.plugins:maven-install-plugin:2.5.2:install-file  -Dfile=target/coat-libs-2.0-SNAPSHOT.jar \
+mvn org.apache.maven.plugins:maven-install-plugin:2.5.2:install-file  -Dfile=target/coat-libs-2.4-SNAPSHOT.jar \
     -DgroupId=org.jlab.coat \
     -DartifactId=coat-libs \
-    -Dversion=2.0-SNAPSHOT \
+    -Dversion=2.4-SNAPSHOT \
     -Dpackaging=jar \
     -DlocalRepositoryPath=$REPO
 

@@ -176,4 +176,8 @@ public class EvioDataDictionary implements DataDictionary {
         bank.allocate(rows);
         return bank;
     }
+    
+    public void addDescriptor(EvioDataDescriptor desc){
+        this.descriptors.put(desc.getName(), desc);
+    }
 }

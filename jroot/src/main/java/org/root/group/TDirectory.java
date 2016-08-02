@@ -5,6 +5,12 @@
  */
 package org.root.group;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -12,18 +18,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 import org.jlab.evio.stream.EvioInputStream;
 import org.jlab.evio.stream.EvioOutputStream;
+import org.jlab.hipo.io.HipoReader;
+import org.jlab.hipo.io.HipoWriter;
 import org.root.base.EvioWritableTree;
+import org.root.basic.EmbeddedCanvas;
 import org.root.data.DataSetXY;
 import org.root.func.F1D;
 import org.root.histogram.GraphErrors;
 import org.root.histogram.H1D;
 import org.root.histogram.H2D;
 import org.root.histogram.PaveText;
-import org.root.pad.EmbeddedCanvas;
 import org.root.pad.RootCanvas;
 
 /**
@@ -322,11 +332,11 @@ public class TDirectory implements ITreeViewer {
             for(Map.Entry<String,Object> objects : groupObjects.entrySet()){
                 Object dataObject = objects.getValue();
                 if(dataObject instanceof EvioWritableTree){
-                    TreeMap<Integer,Object> tree = ((EvioWritableTree) dataObject).toTreeMap();
+                    Map<Integer,Object> tree = ((EvioWritableTree) dataObject).toTreeMap();
                     String absolutePath = dirname + "/" + objects.getKey();
                     byte[] nameBytes = absolutePath.getBytes();
                     tree.put(2, nameBytes);
-                    outStream.writeTree(tree);
+                    //outStream.writeTree(tree);
                     counter++;
                     //System.out.println(" Saving : [" + dirname + "]  [" 
                     //        +  objects.getKey() + "]");
@@ -338,6 +348,60 @@ public class TDirectory implements ITreeViewer {
         outStream.close();
     }
     
+    public void readHipo(String filename){
+        HipoReader reader = new HipoReader();
+        reader.open(filename);
+        int nevents = reader.getEventCount();
+        System.out.println("Directory Reader : Entries = " + nevents);
+        for(int loop = 0; loop < nevents;loop++){
+            byte[] buffer = reader.readEvent(loop);
+            ByteArrayInputStream bis = new ByteArrayInputStream(buffer);
+            ObjectInput in = null;
+            try {
+                in = new ObjectInputStream(bis);
+                Object o = in.readObject(); 
+                if(o instanceof Map){
+                    Map<Integer,Object>  map = (Map<Integer,Object>) o;
+                    this.addMapObject(map);
+                }
+            } catch (Exception e){
+                System.out.println("[TDirectory::readHipo] something went wrong with event # "+loop);
+            }
+        }
+    }
+    
+    public void writeHipo(String filename){        
+        HipoWriter  writer = new HipoWriter();
+        writer.setCompressionType(2);
+        writer.open(filename);
+        for(Map.Entry<String,TDirectory> group : this.directory.entrySet()){
+
+            String dirname = group.getKey();//this.getName() + "/" + group.getValue().getName();
+            Map<String,Object>  groupObjects = group.getValue().getObjects();
+            int counter = 0;
+            for(Map.Entry<String,Object> objects : groupObjects.entrySet()){
+                Object dataObject = objects.getValue();
+                if(dataObject instanceof EvioWritableTree){
+                    Map<Integer,Object> tree = ((EvioWritableTree) dataObject).toTreeMap();
+                    String absolutePath = dirname + "/" + objects.getKey();
+                    byte[] nameBytes = absolutePath.getBytes();
+                    tree.put(2, nameBytes);
+                    ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+                    ObjectOutputStream out;
+                    try {
+                        out = new ObjectOutputStream(byteOut);
+                        out.writeObject(tree);
+                        byte[]  buffer = byteOut.toByteArray();
+                        System.out.println("Saving object name = " + objects.getKey() + "  size = " + buffer.length);
+                        writer.writeEvent(buffer);
+                    } catch (IOException ex) {
+                        Logger.getLogger(TDirectory.class.getName()).log(Level.SEVERE, null, ex);
+                    }                     
+                }
+            }
+        }
+        writer.close();
+    }
     private String[] getPathComponents(String path){
         int first = path.indexOf("/", 0);
         int last  = path.lastIndexOf("/");
@@ -347,6 +411,72 @@ public class TDirectory implements ITreeViewer {
         tokens[1] = path.substring(0, last);
         tokens[2] = path.substring(last+1, path.length());
         return tokens;
+    }
+    
+    private void addMapObject(Map<Integer,Object> map){
+        if(map.containsKey(1)==true){
+            int[] type = (int[]) map.get(1);
+            if(type[0]==1){
+                H1D h = new H1D();
+                h.fromTreeMap(map);
+                String[] tokens = this.getPathComponents(h.name());
+                if(this.directory.containsKey(tokens[1])==false){
+                    this.directory.put(tokens[1], new TDirectory(tokens[1]));
+                }                
+                h.setName(tokens[2]);
+                this.getDirectory(tokens[1]).add(h);
+            }
+            
+            if(type[0]==2){
+                H2D h = new H2D();
+                h.fromTreeMap(map);
+                String[] tokens = this.getPathComponents(h.getName());
+                //System.err.println(h.name() + "\n" + h.toString());
+                //System.err.println(tokens[0] + " " + tokens[1] + " " + tokens[2]);
+                //this.setName(tokens[0]);
+                if(this.directory.containsKey(tokens[1])==false){
+                    this.directory.put(tokens[1], new TDirectory(tokens[1]));
+                }
+                h.setName(tokens[2]);
+                this.getDirectory(tokens[1]).add(h);
+            }
+                        if(type[0]==6){
+                DataSetXY h = new DataSetXY();
+                h.fromTreeMap(map);
+                String[] tokens = this.getPathComponents(h.getName());
+                
+                if(this.directory.containsKey(tokens[1])==false){
+                    this.directory.put(tokens[1], new TDirectory(tokens[1]));
+                }
+                h.setName(tokens[2]);
+                this.getDirectory(tokens[1]).add(h);
+            }
+            
+            if(type[0]==7){
+                F1D h = new F1D("gaus",0.0,1.0);
+                h.fromTreeMap(map);
+                
+                String[] tokens = this.getPathComponents(h.getName());
+                if(this.directory.containsKey(tokens[1])==false){
+                    this.directory.put(tokens[1], new TDirectory(tokens[1]));
+                }
+                h.setName(tokens[2]);
+                this.getDirectory(tokens[1]).add(h);
+            }
+            if(type[0]==14){
+                PaveText h = new PaveText(0.0,0.0);
+                h.fromTreeMap(map);
+                String[] tokens = this.getPathComponents(h.getName());
+                
+                if(this.directory.containsKey(tokens[1])==false){
+                    this.directory.put(tokens[1], new TDirectory(tokens[1]));
+                }
+                h.setName(tokens[2]);
+                this.getDirectory(tokens[1]).add(h);
+            }
+        
+        }
+        
     }
     
     public void readFile(String filename){
@@ -462,27 +592,30 @@ public class TDirectory implements ITreeViewer {
                     if(dirObject instanceof H1D){
                         H1D h1 = (H1D) dirObject;
                         canvas.draw( h1, options);
-                        canvas.incrementPad();
+                        canvas.cd(canvas.getCurrentPad()+1);
+                        
                     }
                     if(dirObject instanceof H2D){
                         H2D h2 = (H2D) dirObject;
                         canvas.draw( h2, options);
-                        canvas.incrementPad();
+                        canvas.cd(canvas.getCurrentPad()+1);
                     }
                     if(dirObject instanceof GraphErrors){
                         GraphErrors gr = (GraphErrors) dirObject;
                         canvas.draw( gr);
-                        canvas.incrementPad();
+                        canvas.cd(canvas.getCurrentPad()+1);
+
                     }
                     if(dirObject instanceof DataSetXY){
                         DataSetXY gr = (DataSetXY) dirObject;
                         canvas.draw( gr);
-                        canvas.incrementPad();
+                        canvas.cd(canvas.getCurrentPad()+1);                        
                     }
                     if(dirObject instanceof F1D){
                         F1D func = (F1D) dirObject;
                         canvas.draw( func);
-                        canvas.incrementPad();
+                        canvas.cd(canvas.getCurrentPad()+1);
+
                     }
                 }
             }
@@ -496,6 +629,7 @@ public class TDirectory implements ITreeViewer {
     
     
     public static void main(String[] args){
+        
         String command    = args[0];
         String outputFile = args[1];
         

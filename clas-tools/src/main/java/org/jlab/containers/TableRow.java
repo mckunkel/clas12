@@ -72,6 +72,18 @@ public class TableRow {
         return str.toString();
     }
     
+    
+    public String stringLine(){
+        StringBuilder str = new StringBuilder();
+        for(Number num : entries){
+            if(num instanceof Integer){
+                str.append(String.format(" %8d ", num));
+            } else {
+                str.append(String.format(" %e ", num));
+            }
+        }
+        return str.toString();
+    }
     public static void main(String[] args){
         TableRow row = new TableRow();
         

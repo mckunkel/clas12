@@ -17,7 +17,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jlab.clasrec.main.DetectorMonitoring;
 import org.jlab.clasrec.main.DetectorReconstruction;
-import org.jlab.coda.clara.core.ICService;
 
 /**
  *
@@ -26,8 +25,8 @@ import org.jlab.coda.clara.core.ICService;
 public class JarPluginLoader {
     
     private ArrayList<String>  classNames = new ArrayList<String>();
-    private TreeMap<String,ICService>  jarClasses 
-            = new TreeMap<String,ICService>();
+    private TreeMap<String,DetectorReconstruction>  jarClasses
+            = new TreeMap<String,DetectorReconstruction>();
     
     private TreeMap<String,DetectorMonitoring>    jarMonitoringClasses = new TreeMap<String,DetectorMonitoring>();
             
@@ -117,7 +116,7 @@ public class JarPluginLoader {
                 Class c = Class.forName(className);
                 if(c.getSuperclass()==DetectorReconstruction.class){
                     //System.err.println("\t ====> CLASS = " + className);
-                    ICService  rec = (ICService) c.newInstance();
+                    DetectorReconstruction  rec = (DetectorReconstruction) c.newInstance();
                     jarClasses.put(rec.getName(), rec);
                 }
             }
@@ -180,7 +179,7 @@ public class JarPluginLoader {
             Logger.getLogger(JarPluginLoader.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    public  TreeMap<String,ICService> getClassMap(){ return jarClasses;}
+    public  TreeMap<String,DetectorReconstruction> getClassMap(){ return jarClasses;}
     public  TreeMap<String,DetectorMonitoring>     getMonitoringClassMap(){ return jarMonitoringClasses;}
     
     public static void main(String[] args){

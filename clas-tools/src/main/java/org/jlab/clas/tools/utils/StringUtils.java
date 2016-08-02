@@ -14,6 +14,7 @@ import java.util.List;
  * @author gavalian
  */
 public class StringUtils {
+    
     private static final String blackColor   = "\033[0;30m";
     private static final String redColor     = "\033[0;31m";
     private static final String greenColor   = "\033[0;32m";

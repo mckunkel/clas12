@@ -16,7 +16,7 @@ import org.jlab.clas.detector.DetectorCollectionPane;
 import org.jlab.clas.detector.IDetectorCollectionListener;
 import org.root.base.IDataSet;
 import org.root.histogram.H1D;
-import org.root.pad.EmbeddedCanvas;
+import org.root.pad.TEmbeddedCanvas;
 
 /**
  *
@@ -27,7 +27,7 @@ public class DetectorDatasetPane extends JPanel implements IDetectorCollectionLi
     DetectorCollection<? extends IDataSet> detectorCollection = null;
     
     JSplitPane  splitPane = null;
-    EmbeddedCanvas canvas  = null;
+    TEmbeddedCanvas canvas  = null;
     DetectorCollectionPane tree = null;
     
     public DetectorDatasetPane(DetectorCollection<? extends IDataSet> collection){
@@ -40,7 +40,7 @@ public class DetectorDatasetPane extends JPanel implements IDetectorCollectionLi
         
         this.setLayout(new BorderLayout());
         this.splitPane = new JSplitPane();        
-        this.canvas = new EmbeddedCanvas();
+        this.canvas = new TEmbeddedCanvas();
         this.tree   = new DetectorCollectionPane();
         this.tree.setCollection(detectorCollection);
         this.tree.addListener(this);

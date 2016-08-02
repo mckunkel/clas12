@@ -189,4 +189,9 @@ public class Vector3 {
         str.append(String.format("%e %e %e",this.mag(),this.theta(),this.phi()));
         return str.toString();
     }
+    
+    @Override
+    public String toString(){
+        return this.getXYZString();
+    }
 }

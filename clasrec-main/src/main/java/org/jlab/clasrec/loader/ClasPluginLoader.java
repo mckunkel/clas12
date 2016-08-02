@@ -8,11 +8,11 @@ package org.jlab.clasrec.loader;
 
 import org.jlab.clas.tools.utils.FileUtils;
 import org.jlab.clas.tools.utils.ResourcesUtils;
+import org.jlab.clasrec.main.DetectorReconstruction;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.Map;
 
-import org.jlab.coda.clara.core.ICService;
 
 /**
  *
@@ -83,8 +83,8 @@ public class ClasPluginLoader {
     }
     
     public void show(){
-        TreeMap<String,ICService> detectors = pluginLoader.getClassMap();
-        for(Map.Entry<String,ICService> entry : detectors.entrySet()){
+        TreeMap<String,DetectorReconstruction> detectors = pluginLoader.getClassMap();
+        for(Map.Entry<String,DetectorReconstruction> entry : detectors.entrySet()){
             System.err.println(String.format("[PLUGINS] --->  %8s : %s <-", 
                     entry.getKey(),entry.getValue()));
         }

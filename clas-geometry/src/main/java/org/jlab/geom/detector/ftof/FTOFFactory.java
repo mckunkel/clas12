@@ -1,10 +1,13 @@
 package org.jlab.geom.detector.ftof;
 
 import java.util.List;
+import org.jlab.detector.geant4.FTOFGeant4Factory;
 import org.jlab.geom.base.ConstantProvider;
 import org.jlab.geom.base.DetectorTransformation;
 import org.jlab.geom.base.Factory;
+import org.jlab.geom.component.ScintillatorMesh;
 import org.jlab.geom.component.ScintillatorPaddle;
+import org.jlab.geom.geant.Geant4Basic;
 import org.jlab.geom.prim.Triangle3D;
 import org.jlab.geom.prim.Point3D;
 import org.jlab.geom.prim.Transformation3D;
@@ -219,5 +222,67 @@ public class FTOFFactory implements Factory <FTOFDetector, FTOFSector, FTOFSuper
     @Override
     public DetectorTransformation getDetectorTransform(ConstantProvider cp) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    
+    public FTOFDetectorMesh getDetectorGeant4(ConstantProvider cp){
+        FTOFDetectorMesh  detector = new FTOFDetectorMesh();
+        FTOFGeant4Factory  factory = new FTOFGeant4Factory();
+        
+        for(int sector = 1; sector <=6; sector++){
+            
+            FTOFSectorMesh ftofSector = new FTOFSectorMesh(sector);
+            
+            for(int layer = 1; layer <= 3; layer++){
+                
+                FTOFSuperlayerMesh  ftofSuperlayer = new FTOFSuperlayerMesh(sector,layer);
+                FTOFLayerMesh       ftofLayer      = new FTOFLayerMesh(sector,layer,1);
+                
+                Geant4Basic  sLayer = factory.createPanel(cp, sector, layer);
+                Transformation3D  rotationMother    = sLayer.rotation().inverse();
+                //Transformation3D  rotationMother    = new Transformation3D();
+                //rotationMother.copy(sLayer.rotation());
+                //rotationMother.inverse();
+                Transformation3D  translationMother = sLayer.translation();
+                //System.out.println(" SECTOR = " + sector + "  LAYER = " + layer);
+                //System.out.println(sLayer.toString());
+                //rotationMother.show();
+                //translationMother.show();
+                
+                int counter = 1;
+                for(Geant4Basic paddle : sLayer.getChildren()){
+
+                    double[] params = paddle.getParameters();
+                    int[]    ids    = paddle.getId();
+                    Transformation3D  rotChild = paddle.rotation();
+                    Transformation3D  trChild  = paddle.translation();
+                    //System.out.println("PADDLE " + counter);
+                    //trChild.show();
+                    //rotChild.show();
+                    //rotationMother.show();
+                    //translationMother.show();
+                    counter++;
+                    ScintillatorMesh  sciPaddle = new  ScintillatorMesh(ids[2],params[0],params[1],params[2]);
+                    rotChild.apply(sciPaddle);
+                    trChild.apply(sciPaddle);
+                    
+                    rotationMother.apply(sciPaddle);
+                    translationMother.apply(sciPaddle);
+                    
+                    ftofLayer.addComponent(sciPaddle);        
+                    /*
+                    System.out.print("paddle = " 
+                            + params[0] + " " + params[1] + " " + params[2]  + "  ID = ");
+                    for(int id : ids){
+                        System.out.print(" " + id);
+                    }
+                    System.out.println();*/
+                }
+                ftofSuperlayer.addLayer(ftofLayer);
+                ftofSector.addSuperlayer(ftofSuperlayer);
+            }
+            detector.addSector(ftofSector);
+        }
+        return detector;
     }
 }

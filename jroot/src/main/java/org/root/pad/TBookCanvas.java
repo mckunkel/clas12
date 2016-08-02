@@ -33,7 +33,7 @@ public class TBookCanvas extends JPanel implements ActionListener {
     
     private List<IDataSet> container = new ArrayList<IDataSet>();
     private List<String>   options   = new ArrayList<String>();
-    private EmbeddedCanvas canvas    = new EmbeddedCanvas();
+    private TEmbeddedCanvas canvas    = new TEmbeddedCanvas();
     private int            nDivisionsX = 1;
     private int            nDivisionsY = 1;
     private int            currentPosition = 0;

@@ -11,6 +11,6 @@ import org.jlab.data.io.DataEvent;
  *
  * @author gavalian
  */
-public interface IDataEventProcessor {
-    public void processEvent(DataEvent event, IDataEventType type);
+public interface IDataEventProcessor {    
+    public void processEvent(DataEvent event, IDataEventType type);    
 }

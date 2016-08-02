@@ -26,6 +26,9 @@ public class DataSetFrame {
     private  GraphicsAxisFrame   axisFrame    = new GraphicsAxisFrame();
     private  PaveText            datasetStats = new PaveText();
     private  int                 statBoxFontSize = 12;
+    private  boolean 			 showStats = true;
+    private  boolean[]           statsOptions = {true,true,true,true};
+    private  String              statBoxFont = "Avenir";
     public  DataSetFrame(){
         
     }
@@ -108,20 +111,38 @@ public class DataSetFrame {
     public void clear(){
         this.collection.clear();
     }
+    public void remove(IDataSet ds){
+    	this.collection.removeDataSet(ds);
+    }
     
     public void add(IDataSet ds){
         this.collection.clear();
         this.add(ds, "");
     }
     
+    
     public void add(IDataSet ds,String option){
-        
+        boolean alreadyInCollection = false;
+        int pos = 0;
+        String previousOptions = "";
+        for(int i=0; i<this.collection.getCount(); i++){
+        	if(this.collection.getDataSet(i).equals(ds)){
+        		pos = i;
+        		alreadyInCollection = true;
+        		previousOptions = this.collection.getDataSetOption(i);
+        	}
+        }
+    	
         if(option.contains("same")==false){
             this.collection.clear();
         }
-        
-        this.collection.addDataSet(ds,option);
-        
+        if(!alreadyInCollection){
+        	this.collection.addDataSet(ds,option);
+        }else{
+        	if(!previousOptions.equals(option)){
+        		this.collection.setDataSetOption(pos,option);
+        	}
+        }
         if(this.collection.getCount()==1){
             //System.out.println("Adding the title");
             try {
@@ -162,7 +183,34 @@ public class DataSetFrame {
     
     public void setStatBoxFontSize(int size){
         this.statBoxFontSize = size;
-        this.datasetStats.setFont("Monospaced", size);
+        this.datasetStats.setFont(statBoxFont, size);
     }
     
+    public void setStatBoxFontName(String font){
+        this.statBoxFont = font;
+        this.datasetStats.setFont(statBoxFont, this.statBoxFontSize);
+    }
+    
+    public int getStatBoxFontSize(){
+        return this.statBoxFontSize;
+     }
+    
+    public String getStatBoxFontName(){
+       return this.statBoxFont;
+    }
+    
+    public DataSetCollection  getCollection(){
+        return this.collection;
+    }
+    
+    public void  setCollection(DataSetCollection collection){
+        this.collection = collection;
+    }
+    public PaveText getStatsPaveText(){
+    	return this.datasetStats;
+    }
+    
+    public void setStatsPaveText(PaveText text){
+    	this.datasetStats = text;
+    }
 }

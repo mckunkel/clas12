@@ -522,7 +522,104 @@ public class EvioDataEvent implements DataEvent {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    
+    public void appendGeneratedBank(DataBank bank){
+         //System.err.println("---------> 1");
+        String parent_tag = bank.getDescriptor().getPropertyString("parent_tag");
+        String container_tag = bank.getDescriptor().getPropertyString("container_tag");
+        //System.err.println("---------> 2");
+        EvioEvent baseBank = new EvioEvent(Integer.parseInt(parent_tag), DataType.ALSOBANK, 0);
+        //System.err.println("---------> 3");
+        EvioBank sectionBank = new EvioBank(Integer.parseInt(container_tag), DataType.ALSOBANK, 0);
+        //System.err.println("---------> 4");
+        
+        EventBuilder builder = new EventBuilder(baseBank);
+        
+        
+        ByteOrder byteOrder = this.eventHandler.getStructure().getByteBuffer().order();
+        
+        baseBank.setByteOrder(byteOrder);
+        sectionBank.setByteOrder(byteOrder);
+        //doubleBank.setByteOrder(byteOrder);
+        //System.err.println("------------ adding bank ");
+        //System.err.println("------------ adding bank " + bank.getDescriptor().getName());
+        try {
+            String[] entries = bank.getDescriptor().getEntryList();
+            for(String entry : entries){
+                //System.out.println("----> adding entry " + entry);
+                int e_tag = bank.getDescriptor().getProperty("tag", entry);
+                int e_num = bank.getDescriptor().getProperty("num", entry);
+                int e_typ = bank.getDescriptor().getProperty("type", entry);
+                if(DataEntryType.getType(e_typ)==DataEntryType.INTEGER){
+                    EvioBank dataBank = new EvioBank(e_tag, DataType.INT32, e_num);
+                    dataBank.setByteOrder(byteOrder);
+                    dataBank.appendIntData(bank.getInt(entry));
+                    builder.addChild(baseBank, dataBank);
+                }
+                
+                if(DataEntryType.getType(e_typ)==DataEntryType.DOUBLE){
+                    EvioBank dataBank = new EvioBank(e_tag, DataType.DOUBLE64, e_num);
+                    dataBank.setByteOrder(byteOrder);
+                    dataBank.appendDoubleData(bank.getDouble(entry));
+                    builder.addChild(baseBank, dataBank);
+                }
+                
+                if(DataEntryType.getType(e_typ)==DataEntryType.FLOAT){
+                    EvioBank dataBank = new EvioBank(e_tag, DataType.FLOAT32, e_num);
+                    dataBank.setByteOrder(byteOrder);
+                    dataBank.appendFloatData(bank.getFloat(entry));
+                    builder.addChild(baseBank, dataBank);
+                }
+                
+                if(DataEntryType.getType(e_typ)==DataEntryType.SHORT){
+                    EvioBank dataBank = new EvioBank(e_tag, DataType.SHORT16, e_num);
+                    dataBank.setByteOrder(byteOrder);
+                    dataBank.appendShortData(bank.getShort(entry));
+                    builder.addChild(baseBank, dataBank);
+                }
+                
+                if(DataEntryType.getType(e_typ)==DataEntryType.BYTE){
+                    EvioBank dataBank = new EvioBank(e_tag, DataType.CHAR8, e_num);
+                    dataBank.setByteOrder(byteOrder);
+                    dataBank.appendByteData(bank.getByte(entry));
+                    builder.addChild(baseBank, dataBank);
+                }
+            }
+            
+            //builder.addChild(baseBank, sectionBank);
+            
+            int byteSize = baseBank.getTotalBytes();
+            ByteBuffer bb = ByteBuffer.allocate(byteSize);
+            //System.out.println("-------> adding bank " + bank.getDescriptor().getName()
+            //  + "  size = " + byteSize);
+            bb.order(byteOrder);
+            baseBank.write(bb);
+            bb.flip();
+            //System.out.println("-----> prior size = " + structure.getByteBuffer().limit());
+            ByteBuffer newBuffer = this.eventHandler.getStructure().addStructure(bb);
+            //System.out.println("---> new byte buffer has size " + newBuffer.limit()            
+            //        +  "   changed from " + structure.getByteBuffer().limit());
+            //structure.
+            EvioCompactStructureHandler handler = new EvioCompactStructureHandler(
+                    this.eventHandler.getStructure().getByteBuffer(),DataType.BANK);
+            this.eventHandler.setStructure( handler );
+            /*
+            for (Map.Entry<String, int[]> bank : integerContainer.entrySet()) {
+            EvioBank dataBank = new EvioBank(tag, DataType.INT32, bank.getKey());
+            dataBank.setByteOrder(byteOrder);
+            dataBank.appendIntData(bank.getValue());
+            builder.addChild(intBank, dataBank);
+            }
+            
+            for (Entry<Integer, double[]> bank : doubleBanks.entrySet()) {
+            EvioBank dataBank = new EvioBank(tag, DataType.DOUBLE64, bank.getKey());
+            dataBank.setByteOrder(byteOrder);
+            dataBank.appendDoubleData(bank.getValue());
+            builder.addChild(doubleBank, dataBank);
+            }*/
+        } catch (EvioException e) {
+            e.printStackTrace();
+        }
+    }
     
     @Override
     public void appendBank(DataBank bank) {
@@ -534,8 +631,10 @@ public class EvioDataEvent implements DataEvent {
         //System.err.println("---------> 3");
         EvioBank sectionBank = new EvioBank(Integer.parseInt(container_tag), DataType.ALSOBANK, 0);
         //System.err.println("---------> 4");
-
+        
         EventBuilder builder = new EventBuilder(baseBank);
+        
+        
         ByteOrder byteOrder = this.eventHandler.getStructure().getByteBuffer().order();
         
         baseBank.setByteOrder(byteOrder);
@@ -591,7 +690,7 @@ public class EvioDataEvent implements DataEvent {
             int byteSize = baseBank.getTotalBytes();
             ByteBuffer bb = ByteBuffer.allocate(byteSize);
             //System.out.println("-------> adding bank " + bank.getDescriptor().getName()
-            //+ "  size = " + byteSize);
+            //  + "  size = " + byteSize);
             bb.order(byteOrder);
             baseBank.write(bb);
             bb.flip();
@@ -677,6 +776,11 @@ public class EvioDataEvent implements DataEvent {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    public void copyEvent(EvioDataEvent event){
+        byte[]  eventBytes = event.getEventBuffer().array();
+        this.eventHandler = new EvioDataEventHandler(eventBytes,event.getByteOrder());
+    }
+    
     @Override
     public void appendBanks(DataBank... banklist) {
         

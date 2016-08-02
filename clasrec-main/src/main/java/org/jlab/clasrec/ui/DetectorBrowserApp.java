@@ -28,7 +28,7 @@ import org.jlab.geom.gui.DetectorShape3DStore;
 import org.jlab.geom.gui.DetectorViewPanel;
 import org.jlab.geom.gui.IDetectorComponentSelection;
 import org.jlab.geom.gui.IDetectorShapeIntensity;
-import org.root.pad.EmbeddedCanvas;
+import org.root.pad.TEmbeddedCanvas;
 
 /**
  *
@@ -37,7 +37,7 @@ import org.root.pad.EmbeddedCanvas;
 public class DetectorBrowserApp extends JFrame implements IDetectorComponentSelection,ActionListener {
     
     private JSplitPane splitPane;
-    private EmbeddedCanvas canvas;
+    private TEmbeddedCanvas canvas;
     private DetectorViewPanel detectorView;
     private TreeMap<String,DetectorShape3DStore>  shapeTree = new TreeMap<String,DetectorShape3DStore>();
     private IDetectorHistogramDraw histogramDrawer = null;
@@ -107,7 +107,7 @@ public class DetectorBrowserApp extends JFrame implements IDetectorComponentSele
         splitPane.setPreferredSize(new Dimension(1200,900));
         splitPane.setDividerLocation(900);
         
-        canvas = new EmbeddedCanvas(800,400,3,1);
+        canvas = new TEmbeddedCanvas(800,400,3,1);
         detectorView = new DetectorViewPanel();
         
         

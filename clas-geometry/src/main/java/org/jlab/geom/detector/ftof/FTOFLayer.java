@@ -22,7 +22,7 @@ import org.jlab.geom.component.ScintillatorPaddle;
 public class FTOFLayer extends AbstractLayer<ScintillatorPaddle> {
     
     protected FTOFLayer(int sectorId, int superlayerId, int layerId) {
-        super(DetectorId.FTOF, sectorId, superlayerId, layerId, true);
+        super(DetectorId.FTOF, sectorId, superlayerId, layerId, false);
     }
     
     /**

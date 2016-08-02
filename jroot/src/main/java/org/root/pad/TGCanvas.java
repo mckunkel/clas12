@@ -8,6 +8,7 @@ package org.root.pad;
 import java.awt.BorderLayout;
 import javax.swing.JFrame;
 import org.root.base.IDataSet;
+import org.root.basic.EmbeddedCanvas;
 import org.root.histogram.DataBox;
 
 /**
@@ -20,7 +21,7 @@ public class TGCanvas extends JFrame {
     
     public TGCanvas(){
         super();
-        embCanvas = new EmbeddedCanvas(600,600);
+        embCanvas = new EmbeddedCanvas(600,600,1,1);
         this.add(embCanvas,BorderLayout.CENTER);
         this.pack();
         this.setVisible(true);
@@ -38,6 +39,10 @@ public class TGCanvas extends JFrame {
     
     public void setAxisRange(double xmin, double xmax, double ymin, double ymax){
         this.getCanvas().setAxisRange(xmin, xmax, ymin, ymax);
+    }
+    
+    public void setAxisRange(String axis, double min, double max){
+        this.getCanvas().setAxisRange(axis, min, max);
     }
     
     public void cd(int pad){
@@ -86,6 +91,10 @@ public class TGCanvas extends JFrame {
     
     public void setStatBoxFontSize(int size){
         this.embCanvas.setStatBoxFontSize(size);
+    }
+    
+    public void setAxisTitleFontSize(int size){
+        this.embCanvas.setAxisTitleFontSize(size);
     }
     
     public static void main(String[] args){

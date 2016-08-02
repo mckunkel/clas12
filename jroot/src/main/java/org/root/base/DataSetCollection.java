@@ -72,18 +72,30 @@ public class DataSetCollection {
     }
     
     public void addDataSet(IDataSet ds){
-        this.addDataSet(ds, "");
+    	this.addDataSet(ds, "");
     }
     
     public void addDataSet(IDataSet ds, String option){
         this.dsCollection.add(ds);
         this.dsCollectionOptions.add(option);
     }
+
+    public void  removeDataSet(int index){
+    		this.dsCollection.remove(index);
+    		this.dsCollectionOptions.remove(index);
+    }
+
+    public void  removeDataSet(IDataSet ds){
+    	removeDataSet(this.dsCollection.indexOf(ds));
+    }
+    
     
     public int  getCount(){ return this.dsCollection.size();}
     public IDataSet  getDataSet(int index){ return this.dsCollection.get(index);}
     public String    getDataSetOption(int index){ return this.dsCollectionOptions.get(index);}
-    
+    public void      setDataSetOption(int index,String option){ this.dsCollectionOptions.set(index, option);}
+
+
     public void setAxisLog(boolean flag, String axis){
         //if(axis.compareTo("X")==0) 
     }

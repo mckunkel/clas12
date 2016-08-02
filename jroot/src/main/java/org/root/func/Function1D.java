@@ -54,6 +54,10 @@ public class Function1D  {
         this.setLineStyle(1);
     }
     
+    public Attributes getAttributes() {
+        return this.attr;
+    }
+    
     public int  getLineColor(){
         return Integer.parseInt(this.attr.getProperties().getProperty("line-color"));
     }

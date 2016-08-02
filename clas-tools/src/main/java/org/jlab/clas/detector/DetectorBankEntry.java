@@ -14,7 +14,7 @@ public class DetectorBankEntry implements IDetectorUnit {
     DetectorDescriptor  dataDesc   = new DetectorDescriptor();
     BankType            dataType   =  BankType.UNDEFINED;
     Object              dataObject = null;
-    
+    long                timeStamp  = (long) 0;
     
     public DetectorBankEntry(int crate, int slot, int channel){
         this.dataDesc.setCrateSlotChannel(crate, slot, channel);
@@ -24,6 +24,13 @@ public class DetectorBankEntry implements IDetectorUnit {
         return this.dataDesc;
     }
     
+    public void setTimeStamp(long ts){
+        this.timeStamp = ts;
+    }
+    
+    public long getTimeStamp(){
+        return this.timeStamp;
+    }
     
     public void setData(BankType type,  int[] values){
         this.dataObject = values;
@@ -47,7 +54,8 @@ public class DetectorBankEntry implements IDetectorUnit {
     public String toString(){
         StringBuilder str = new StringBuilder();
         str.append(this.dataDesc.toString());
-        str.append(String.format(" -->>>  TYPE = %8s", this.dataType.getName()));
+        str.append(String.format(" -->>>  TYPE = %8s  TIME STAMP = %d", 
+                this.dataType.getName(),this.getTimeStamp()));
         
         if(this.dataType==BankType.ADCFPGA){
             int[] fpga = (int[]) this.getDataObject();

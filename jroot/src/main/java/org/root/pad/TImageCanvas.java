@@ -219,7 +219,7 @@ public class TImageCanvas {
      */
     public void setTitleFontSize(int size){
         for(DataSetFrame pad : this.dataSets){
-            pad.getAxisFrame().setTitleSize(size);
+            pad.getAxisFrame().setTitleFontSize(size);
         }
     }
     /**

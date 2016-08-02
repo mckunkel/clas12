@@ -13,8 +13,10 @@ import java.util.TreeMap;
  * @author gavalian
  */
 public class HashCollection<T> {
-    private Map<Long,T>  collection = new TreeMap<Long,T>();
-    private int          indexCount = 3;
+    
+    
+    private final Map<Long,T>  collection = new TreeMap<Long,T>();
+    private int                indexCount = 3;
     
     public HashCollection(){
         

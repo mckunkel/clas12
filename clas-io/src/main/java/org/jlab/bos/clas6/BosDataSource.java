@@ -30,7 +30,7 @@ import org.jlab.data.io.DataSource;
 public class BosDataSource implements DataSource {
     
     private String bosFileName = "undef";    
-    private static final int  MAXIMUM_BYTE_READ = 700000;
+    private static final int  MAXIMUM_BYTE_READ = 7000;
     private int  currentBufferPosition = -1;
     private int  currentEventInBuffer = 0;
     private int  currentBufferEventPosition = -1;

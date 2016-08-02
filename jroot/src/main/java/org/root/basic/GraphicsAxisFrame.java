@@ -28,14 +28,15 @@ public class GraphicsAxisFrame {
     private LatexText     frameTitle   = new LatexText("");
     private Boolean       axisGridX    = true;
     private Boolean       axisGridY    = true;
-    
+    private String        frameTitltFontName = "Avenir";
+    private int           frameTitleFontSize = 12;
     public static float[]  dashPattern1 = new float[]{3.0f,3.0f};
     public static float[]  dashPattern2 = new float[]{10.0f,5.0f,2.0f,5.0f};
     public static float[]  dashPattern3 = new float[]{2.0f,5.0f,2.0f,5.0f};
     
     public GraphicsAxisFrame(){
         this.axisY.setVertical(true);
-        this.axisX.setTitleSize(12);        
+        this.axisX.setTitleSize(12);
         this.axisX.setAxisFontSize(12);
         this.axisY.setAxisFontSize(12);
         //this.axisY.setTitleSize(14);
@@ -57,6 +58,14 @@ public class GraphicsAxisFrame {
     
     public Rectangle  getMargins(){
         return this.frameMargins;
+    }
+    
+    public boolean getGridX(){
+        return this.axisGridX;
+    }
+    
+    public boolean getGridY(){
+        return this.axisGridY;
     }
     
     public void setGridX(boolean flag){
@@ -157,11 +166,25 @@ public class GraphicsAxisFrame {
         this.frameTitle.setText(title);
     }
     
-    public void setTitleFont(String font){
+    public String getTitle(){
+        return this.frameTitle.getTextString();
+    }
+    
+    public void setTitleFontName(String font){
+        this.frameTitltFontName = font;
         this.frameTitle.setFont(font);
     }
     
-    public void setTitleSize(int size){
+    public void setTitleFontSize(int size){
+        this.frameTitleFontSize = size;
         this.frameTitle.setFontSize(size);
+    }
+    
+    public int getTitleFontSize(){
+        return this.frameTitleFontSize;
+    }
+    
+    public String getTitleFontName(){
+        return this.frameTitltFontName;
     }
 }

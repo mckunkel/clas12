@@ -15,8 +15,14 @@ import org.root.data.DataSetXY;
  */
 public class RandomFunc {
     private DataSetXY dataFunc = null;
+    
     public RandomFunc(F1D func){
         DataSetXY xy    = func.getDataSet(200);
+        dataFunc  = xy.getDataSetRieman();
+    }
+    
+    public RandomFunc(F1D func, int resolution){
+        DataSetXY xy    = func.getDataSet(resolution);
         dataFunc  = xy.getDataSetRieman();
     }
     
@@ -27,6 +33,8 @@ public class RandomFunc {
     public double random(){
         double number = Math.random();
         int bin  = dataFunc.getDataY().findBin(number);
+        bin = bin -1;
+        if(bin<0) bin =1;
         double xlow = dataFunc.getDataX().getLowEdge(bin);
         double xhi  = dataFunc.getDataX().getHighEdge(bin);
         return xlow + Math.random()*(xhi-xlow);

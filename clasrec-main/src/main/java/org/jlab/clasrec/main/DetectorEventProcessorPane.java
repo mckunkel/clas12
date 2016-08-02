@@ -240,7 +240,7 @@ public class DetectorEventProcessorPane extends JPanel implements ActionListener
 		}
             }
             processTimer = new Timer();
-            processTimer.schedule(new CrunchifyReminder(), 100 ,10 );
+            processTimer.schedule(new CrunchifyReminder(), 1 ,1 );
             this.buttonStop.setEnabled(true);
             this.buttonNext.setEnabled(false);
             this.buttonPrev.setEnabled(false);
@@ -288,11 +288,12 @@ public class DetectorEventProcessorPane extends JPanel implements ActionListener
             }
             
             if(this.etReader.hasEvent()==true){
-                EvioDataEvent event = (EvioDataEvent) this.etReader.getNextEvent();
-                Integer current = this.etReader.getCurrentIndex();
-                Integer nevents = this.etReader.getSize();
                 
-                this.statusLabel.setText("EVENTS IN FILE : " + nevents.toString() + "  CURRENT : " + current.toString());
+                EvioDataEvent event = (EvioDataEvent) this.etReader.getNextEvent();
+                Integer current   = this.etReader.getCurrentIndex();
+                Integer nevents   = this.etReader.getSize();
+                
+                this.statusLabel.setText("EVENTS : " + nevents.toString() + "  CURRENT : " + current.toString());
                 
                 for(IDetectorProcessor proc : this.processorList){                                        
                      

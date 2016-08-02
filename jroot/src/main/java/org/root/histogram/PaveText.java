@@ -56,7 +56,8 @@ public class PaveText implements EvioWritableTree {
         return this.objectName;
     }
 
-    public TreeMap<Integer, Object> toTreeMap() {
+    @Override
+    public Map<Integer, Object> toTreeMap() {
         TreeMap<Integer, Object> objData = new TreeMap<Integer, Object>();
         objData.put(1, new int[]{14});
         byte[] nameBytes = this.objectName.getBytes();
@@ -69,7 +70,8 @@ public class PaveText implements EvioWritableTree {
         return objData;
     }
 
-    public void fromTreeMap(TreeMap<Integer, Object> map) {
+    @Override
+    public void fromTreeMap(Map<Integer, Object> map) {
         this.paveStrings.clear();
         if(map.get(1) instanceof int[]){
             if(  ((int[]) map.get(1))[0]==14){

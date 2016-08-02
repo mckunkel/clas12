@@ -20,7 +20,6 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import org.jlab.clasrec.main.DetectorMonitoring;
-import org.jlab.coda.clara.core.ICService;
 
 /**
  *

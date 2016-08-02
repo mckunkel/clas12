@@ -9,8 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 import org.jlab.clas.detector.DetectorType;
+import org.jlab.clas.physics.Particle;
+import org.jlab.clas.physics.PhysicsEvent;
 import org.jlab.clas.physics.Vector3;
 import org.jlab.geom.prim.Line3D;
+import org.jlab.geom.prim.Path3D;
 import org.jlab.geom.prim.Point3D;
 
 /**
@@ -34,6 +37,9 @@ public class DetectorParticle {
     private TreeMap<DetectorType,Vector3>  projectedHit = 
             new  TreeMap<DetectorType,Vector3>();
     
+    
+    
+    
     public DetectorParticle(){
         
     }
@@ -48,7 +54,24 @@ public class DetectorParticle {
         }
     }
     
+    public Particle getPhysicsParticle(int pid){
+        Particle  particle = new Particle(pid,
+                this.vector().x(),this.vector().y(),this.vector().z(),
+                this.vertex().x(),this.vertex().y(),this.vertex().z()
+        );
+        return particle;
+    }
+    
+    public double compare(Vector3 vec){
+        return this.vector().compare(vec);
+    }
+    
+    public double compare(double x, double y, double z){
+        return this.vector().compare(new Vector3(x,y,z));
+    }
+    
     public void addResponse(DetectorResponse res){
+        /*
         double distance = Math.sqrt(
                 (this.particleCrossPosition.x()-res.getPosition().x())*
                         (this.particleCrossPosition.x()-res.getPosition().x())
@@ -77,6 +100,7 @@ public class DetectorParticle {
                 );
         
         res.setPath(distance+this.particlePath);
+        this.responseStore.add(res);*/
         this.responseStore.add(res);
     }
     
@@ -98,6 +122,15 @@ public class DetectorParticle {
         if(hits>1) System.out.println("[Warning] Too many hits for detector type = " + type);
         return true;
     }
+    public boolean hasHit(DetectorType type, int layer){
+        int hits = 0;
+        for( DetectorResponse res : this.responseStore){
+            if(res.getDescriptor().getType()==type&&res.getDescriptor().getLayer()==layer) hits++;
+        }
+        if(hits==0) return false;
+        if(hits>1) System.out.println("[Warning] Too many hits for detector type = " + type);
+        return true;
+    }
     
     public List<DetectorResponse>  getDetectorResponses(){
         return this.responseStore;
@@ -110,20 +143,42 @@ public class DetectorParticle {
         return null;
     }
     
+    public DetectorResponse getHit(DetectorType type, int layer){
+        for(DetectorResponse res : this.responseStore){
+            if(res.getDescriptor().getType()==type&&res.getDescriptor().getLayer()==layer) return res;
+        }
+        return null;
+    }
+    
     public double getBeta(){ return this.particleBeta;}
     public int    getStatus(){ return this.particleStatus;}
     public double getMass(){ return this.particleMass;}
     public int    getPid(){ return this.particlePID;}
-    public Vector3  vector(){return this.particleMomenta;}
     
-    public Vector3  vertex(){return this.particleVertex;}
+    public Path3D getTrajectory(){
+        Path3D  path = new Path3D();
+        //path.addPoint(this.particleCrossPosition.x(), 
+        //        this.particleCrossPosition.y()
+        //        , this.particleCrossPosition.z());
+        path.generate(
+                this.particleCrossPosition.x(),
+                this.particleCrossPosition.y(),
+                this.particleCrossPosition.z(),
+                this.particleCrossDirection.x(), 
+                this.particleCrossDirection.y(), 
+                this.particleCrossDirection.z(),                               
+                1500.0, 2);
+        return path;
+    }
     
-    public Vector3  getCross(){ return this.particleCrossPosition;}
-    
-    public Vector3  getCrossDir(){ return this.particleCrossDirection;}
-    
+    public Vector3  vector(){return this.particleMomenta;}    
+    public Vector3  vertex(){return this.particleVertex;}    
+    public Vector3  getCross(){ return this.particleCrossPosition;}    
+    public Vector3  getCrossDir(){ return this.particleCrossDirection;}    
     public double   getPathLength(){ return this.particlePath;}
     public int      getCharge(){ return this.particleCharge;}
+    
+    
     
     public double   getPathLength(DetectorType type){
         DetectorResponse response = this.getHit(type);
@@ -153,9 +208,17 @@ public class DetectorParticle {
     }
     
     public double getEnergy(DetectorType type){
+        double energy = 0.0;
+        for(DetectorResponse r : this.responseStore){
+            if(r.getDescriptor().getType()==type){
+                energy += r.getEnergy();
+            }
+        }
+        /*
         DetectorResponse response = this.getHit(type);
         if(response==null) return -1.0;
-        return response.getEnergy();
+        return response.getEnergy();*/
+        return energy;
     }
     
     public double getBeta(DetectorType type){
@@ -228,6 +291,45 @@ public class DetectorParticle {
         }
         return bestIndex;
     }
+    /**
+     * returns DetectorResponse that matches closely with the trajectory
+     * @param responses
+     * @return 
+     */
+    public DetectorResponse getDetectorResponse(List<DetectorResponse> responses){
+        int index = this.getDetectorHitIndex(responses);
+        return responses.get(index);
+    }
+    /**
+     * Finds the index of the best matching detector response object from the list.
+     * @param responses
+     * @return 
+     */
+    public int  getDetectorHitIndex(List<DetectorResponse> responses){
+        Path3D   trajectory = this.getTrajectory();
+        int       bestIndex = 0;
+        Line3D    bestLine     = new Line3D(0.,0.,0.,1000.0,0.0,0.0);
+        Point3D   hitPosition  = new Point3D();
+        int       index        = 0;
+        for(DetectorResponse res : responses){
+            hitPosition.set(res.getPosition().x(), 
+                    res.getPosition().y(),res.getPosition().z());
+            Line3D distance = trajectory.distance(hitPosition);
+            if(distance.length()<bestLine.length()){
+                bestLine.copy(distance);
+                bestIndex = index;
+            }
+            index++;
+        }
+        return bestIndex;
+    }
+    
+    public Line3D  getDistance(DetectorResponse  response){
+        Path3D trajectory = this.getTrajectory();
+        Point3D hitPoint = new Point3D(
+                response.getPosition().x(),response.getPosition().y(),response.getPosition().z());
+        return trajectory.distance(hitPoint);
+    }
     
     public void setPath(double path){
         this.particlePath = path;
@@ -247,6 +349,10 @@ public class DetectorParticle {
                 this.particleVertex.x(),this.particleVertex.y(),
                 this.particleVertex.z()));
         str.append("\n");
+        str.append(String.format("\t\t\t CROSS [%8.4f %8.4f %8.4f]  DIRECTION [%8.4f %8.4f %8.4f]\n",
+                this.particleCrossPosition.x(),this.particleCrossPosition.y(),
+                this.particleCrossPosition.z(),this.particleCrossDirection.x(),
+                this.particleCrossDirection.y(),this.particleCrossDirection.z()));
         for(DetectorResponse res : this.responseStore){
             str.append(res.toString());
             str.append("\n");

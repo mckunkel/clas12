@@ -223,7 +223,7 @@ public class BosDataBank implements DataBank {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    public TableModel getTableModel() {
+    public TableModel getTableModel(String mask) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

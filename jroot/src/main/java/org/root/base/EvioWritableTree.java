@@ -6,6 +6,7 @@
 
 package org.root.base;
 
+import java.util.Map;
 import java.util.TreeMap;
 
 /**
@@ -15,6 +16,6 @@ import java.util.TreeMap;
 public interface EvioWritableTree {
     
     String getName();
-    TreeMap<Integer,Object>  toTreeMap();
-    void                     fromTreeMap(TreeMap<Integer,Object> map);
+    Map<Integer,Object>  toTreeMap();
+    void                     fromTreeMap(Map<Integer,Object> map);
 }

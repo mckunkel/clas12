@@ -7,6 +7,7 @@ package org.jlab.clas.detector;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +23,7 @@ import javax.swing.tree.TreeModel;
  */
 public class DetectorCollection<T> {
     
-    Map<Integer,T>  collection = new TreeMap<Integer,T>();
+    Map<Integer,T>  collection = new HashMap<Integer,T>();
     String          collectionName = "undefined";
     
     
